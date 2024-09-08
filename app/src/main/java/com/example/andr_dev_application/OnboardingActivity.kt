@@ -1,4 +1,4 @@
-package com.example.andr_dev_application // Change to your app's package name
+package com.example.andr_dev_application
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
