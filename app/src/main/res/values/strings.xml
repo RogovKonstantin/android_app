@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Andr_Dev_Application</string>
+    <string name="hero_image">Hero Image</string>
 </resources>
