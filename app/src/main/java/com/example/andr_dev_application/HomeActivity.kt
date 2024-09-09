@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
@@ -35,7 +34,7 @@ class HomeActivity : AppCompatActivity() {
                 // Convert List to MutableList
                 heroCardAdapter = HeroCardAdapter(users.toMutableList())
                 recyclerView.adapter = heroCardAdapter
-                recyclerView.layoutManager = LinearLayoutManager(this@HomeActivity)
+                recyclerView.layoutManager = StackLayoutManager(this@HomeActivity)
             } catch (e: Exception) {
                 Toast.makeText(this@HomeActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }

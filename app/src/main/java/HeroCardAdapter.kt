@@ -11,26 +11,43 @@ import com.bumptech.glide.Glide
 
 class HeroCardAdapter(
     private var heroes: MutableList<HeroModel>
-) : RecyclerView.Adapter<HeroCardAdapter.HeroViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HeroViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.hero_card, parent, false)
-        return HeroViewHolder(view)
+    private val VIEW_TYPE_HERO = 1
+    private val VIEW_TYPE_NO_MORE = 2
+
+    override fun getItemViewType(position: Int): Int {
+        return if (heroes.isEmpty()) VIEW_TYPE_NO_MORE else VIEW_TYPE_HERO
     }
 
-    override fun onBindViewHolder(holder: HeroViewHolder, position: Int) {
-        val hero = heroes[position]
-        holder.userName.text = hero.firstName
-        holder.userDescription.text = hero.lastName
-        Glide.with(holder.itemView.context).load(hero.imageUrl).into(holder.userImage)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_HERO) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.hero_card, parent, false)
+            HeroViewHolder(view)
+        } else {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.no_more_card, parent, false)
+            NoMoreViewHolder(view)
+        }
     }
 
-    override fun getItemCount(): Int = heroes.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is HeroViewHolder) {
+            val hero = heroes[position]
+            holder.userName.text = hero.firstName
+            holder.userDescription.text = hero.lastName
+            Glide.with(holder.itemView.context).load(hero.imageUrl).into(holder.userImage)
+        }
+    }
+
+    override fun getItemCount(): Int = if (heroes.isEmpty()) 1 else heroes.size
 
     fun removeHeroAt(position: Int) {
         if (position < heroes.size) {
             heroes.removeAt(position)
             notifyItemRemoved(position)
+            if (heroes.isEmpty()) {
+                notifyItemInserted(0)
+            }
         }
     }
 
@@ -43,4 +60,6 @@ class HeroCardAdapter(
         val userDescription: TextView = view.findViewById(R.id.user_description)
         val userImage: ImageView = view.findViewById(R.id.user_image)
     }
+
+    class NoMoreViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }
