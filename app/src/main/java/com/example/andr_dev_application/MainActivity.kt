@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private var firstFunctionFragment: Fragment? = null
     private var homeFragment: Fragment? = null
-    private var ratedHeroesFragment: Fragment? = null
+    private var ratedHeroesButtonsFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         buttonFunction3.setOnClickListener {
             selectButton(buttonFunction3)
-            showFragment(RatedHeroesFragment::class.java)
+            showFragment(RatedHeroesButtonsFragment::class.java)
         }
 
         // Load the HomeFragment by default

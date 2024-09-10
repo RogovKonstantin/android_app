@@ -5,29 +5,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class RatedHeroesFragment : Fragment() {
 
-    private lateinit var likedButton: Button
-    private lateinit var dislikedButton: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var heroCardAdapter: HeroCardAdapter
+
+    companion object {
+        private const val ARG_TYPE = "type"
+
+        fun newInstance(type: String): RatedHeroesFragment {
+            val fragment = RatedHeroesFragment()
+            val args = Bundle()
+            args.putString(ARG_TYPE, type)
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_rated_heroes, container, false)
-        likedButton = view.findViewById(R.id.liked_button)
-        dislikedButton = view.findViewById(R.id.disliked_button)
         recyclerView = view.findViewById(R.id.recyclerView)
 
-        likedButton.setOnClickListener { displayHeroes("liked") }
-        dislikedButton.setOnClickListener { displayHeroes("disliked") }
+        val type = arguments?.getString(ARG_TYPE) ?: "liked"
+        displayHeroes(type)
 
         return view
     }
