@@ -17,6 +17,11 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var heroCardAdapter: HeroCardAdapter
 
+    companion object {
+        val likedHeroes = mutableListOf<HeroModel>()
+        val dislikedHeroes = mutableListOf<HeroModel>()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,10 +88,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun likeHero(hero: HeroModel) {
+        likedHeroes.add(hero)
         Toast.makeText(requireContext(), "Liked ${hero.firstName}", Toast.LENGTH_SHORT).show()
     }
 
     private fun dislikeHero(hero: HeroModel) {
+        dislikedHeroes.add(hero)
         Toast.makeText(requireContext(), "Disliked ${hero.firstName}", Toast.LENGTH_SHORT).show()
     }
 }
