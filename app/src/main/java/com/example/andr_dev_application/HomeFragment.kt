@@ -34,8 +34,10 @@ class HomeFragment : Fragment() {
                 val users: List<HeroModel> = RetrofitInstance.api.getUsers()
                 Toast.makeText(requireContext(), "Fetched ${users.size} users.", Toast.LENGTH_SHORT).show()
 
-                // Convert List to MutableList
-                heroCardAdapter = HeroCardAdapter(users.toMutableList())
+                // Convert List to MutableList and add placeholder
+                val mutableUsers = users.toMutableList()
+                mutableUsers.add(HeroModel(0, "", "", "No more heroes nearby", "", "", "", "", true)) // Add placeholder
+                heroCardAdapter = HeroCardAdapter(mutableUsers)
                 recyclerView.adapter = heroCardAdapter
                 recyclerView.layoutManager = StackLayoutManager(requireContext())
             } catch (e: Exception) {
@@ -58,6 +60,12 @@ class HomeFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val hero = heroCardAdapter.getHeroAt(position)
+
+                if (hero.isPlaceholder) {
+                    // If the card is a placeholder, reset the swipe
+                    heroCardAdapter.notifyItemChanged(position)
+                    return
+                }
 
                 if (direction == ItemTouchHelper.RIGHT) {
                     likeHero(hero)
