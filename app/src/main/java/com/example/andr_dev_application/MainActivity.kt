@@ -13,6 +13,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonFunction2: Button
     private lateinit var buttonFunction3: Button
 
+    private var firstFunctionFragment: Fragment? = null
+    private var homeFragment: Fragment? = null
+    private var ratedHeroesFragment: Fragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,21 +31,21 @@ class MainActivity : AppCompatActivity() {
 
         buttonFunction1.setOnClickListener {
             selectButton(buttonFunction1)
-            replaceFragment(HomeFragment())
+            showFragment(FirstFunctionFragment::class.java)
         }
 
         buttonFunction2.setOnClickListener {
             selectButton(buttonFunction2)
-            replaceFragment(HomeFragment())
+            showFragment(HomeFragment::class.java)
         }
 
         buttonFunction3.setOnClickListener {
             selectButton(buttonFunction3)
-            replaceFragment(RatedHeroesFragment())
+            showFragment(RatedHeroesFragment::class.java)
         }
 
         // Load the HomeFragment by default
-        replaceFragment(HomeFragment())
+        showFragment(HomeFragment::class.java)
     }
 
     private fun selectButton(selectedButton: Button) {
@@ -53,10 +57,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun showFragment(fragmentClass: Class<out Fragment>) {
         val fragmentManager: FragmentManager = supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, fragment)
+
+        // Hide all fragments
+        fragmentManager.fragments.forEach { fragmentTransaction.hide(it) }
+
+        // Show the selected fragment
+        val tag = fragmentClass.simpleName
+        var fragment = fragmentManager.findFragmentByTag(tag)
+        if (fragment == null) {
+            fragment = fragmentClass.newInstance()
+            fragmentTransaction.add(R.id.fragment_container, fragment, tag)
+        } else {
+            fragmentTransaction.show(fragment)
+        }
+
         fragmentTransaction.commit()
     }
 }

@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Andr_Dev_Application</string>
     <string name="hero_image">Hero Image</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
