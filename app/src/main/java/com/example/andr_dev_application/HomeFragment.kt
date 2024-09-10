@@ -2,41 +2,44 @@ package com.example.andr_dev_application
 
 import HeroModel
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
-class HomeActivity : AppCompatActivity() {
+class HomeFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var heroCardAdapter: HeroCardAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
-
-        recyclerView = findViewById(R.id.recyclerView)
-
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        recyclerView = view.findViewById(R.id.recyclerView)
         fetchUsers()
-
         setupSwipeGesture()
+        return view
     }
 
     private fun fetchUsers() {
         lifecycleScope.launch {
             try {
                 val users: List<HeroModel> = RetrofitInstance.api.getUsers()
-                Toast.makeText(this@HomeActivity, "Fetched ${users.size} users.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Fetched ${users.size} users.", Toast.LENGTH_SHORT).show()
 
                 // Convert List to MutableList
                 heroCardAdapter = HeroCardAdapter(users.toMutableList())
                 recyclerView.adapter = heroCardAdapter
-                recyclerView.layoutManager = StackLayoutManager(this@HomeActivity)
+                recyclerView.layoutManager = StackLayoutManager(requireContext())
             } catch (e: Exception) {
-                Toast.makeText(this@HomeActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -72,10 +75,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun likeHero(hero: HeroModel) {
-        Toast.makeText(this, "Liked ${hero.firstName}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Liked ${hero.firstName}", Toast.LENGTH_SHORT).show()
     }
 
     private fun dislikeHero(hero: HeroModel) {
-        Toast.makeText(this, "Disliked ${hero.firstName}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Disliked ${hero.firstName}", Toast.LENGTH_SHORT).show()
     }
 }
