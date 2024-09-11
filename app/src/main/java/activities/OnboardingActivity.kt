@@ -12,14 +12,11 @@ class OnboardingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
 
-
-
-
         val nextButton: MaterialButton = findViewById(R.id.next_button)
-
         nextButton.setOnClickListener {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
+            finish()
         }
     }
 }

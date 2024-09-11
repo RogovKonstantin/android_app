@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/user_image"
+            android:id="@+id/hero_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/hero_image"
@@ -34,7 +34,7 @@
             android:textColor="@android:color/white"/>
 
         <TextView
-            android:id="@+id/user_description"
+            android:id="@+id/hero_last_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"

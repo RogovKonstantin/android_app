@@ -60,8 +60,8 @@ class HeroCardAdapter(
 
     class HeroViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val userName: TextView = view.findViewById(R.id.hero_name)
-        val userDescription: TextView = view.findViewById(R.id.user_description)
-        val userImage: ImageView = view.findViewById(R.id.user_image)
+        val userDescription: TextView = view.findViewById(R.id.hero_last_name)
+        val userImage: ImageView = view.findViewById(R.id.hero_image)
     }
 
     class NoMoreCardsViewHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonFunction2: Button
     private lateinit var buttonFunction3: Button
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,9 +25,10 @@ class MainActivity : AppCompatActivity() {
         buttonFunction2 = findViewById(R.id.button_function2)
         buttonFunction3 = findViewById(R.id.button_function3)
 
-        buttonFunction2.isSelected = true
-        buttonFunction2.scaleX = 1.2f
-        buttonFunction2.scaleY = 1.2f
+        if (savedInstanceState == null) {
+            selectButton(buttonFunction2)
+            showFragment(HomeFragment::class.java)
+        }
 
         buttonFunction1.setOnClickListener {
             selectButton(buttonFunction1)
@@ -44,16 +44,13 @@ class MainActivity : AppCompatActivity() {
             selectButton(buttonFunction3)
             showFragment(RatedHeroesButtonsFragment::class.java)
         }
-
-        showFragment(HomeFragment::class.java)
     }
 
     private fun selectButton(selectedButton: Button) {
         val buttons = listOf(buttonFunction1, buttonFunction2, buttonFunction3)
         buttons.forEach { button ->
             button.isSelected = button == selectedButton
-            button.scaleX = if (button.isSelected) 1.1f else 1.0f
-            button.scaleY = if (button.isSelected) 1.1f else 1.0f
+            button.animate().scaleX(if (button.isSelected) 1.1f else 1.0f).scaleY(if (button.isSelected) 1.1f else 1.0f).setDuration(200).start()
         }
     }
 
@@ -71,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                 FirstFunctionFragment::class.java -> FirstFunctionFragment.newInstance()
                 HomeFragment::class.java -> HomeFragment.newInstance()
                 RatedHeroesButtonsFragment::class.java -> RatedHeroesButtonsFragment.newInstance()
-                else -> throw IllegalArgumentException("Unknown Fragment class")
+                else -> throw IllegalArgumentException("Unknown Fragment")
             }
             fragmentTransaction.add(R.id.fragment_container, fragment, tag)
         } else {
@@ -80,5 +77,4 @@ class MainActivity : AppCompatActivity() {
 
         fragmentTransaction.commit()
     }
-
 }

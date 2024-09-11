@@ -30,8 +30,6 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var heroCardAdapter: HeroCardAdapter
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,12 +45,11 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 if (remainingHeroes.isEmpty()) {
-                    val users: List<HeroModel> = RetrofitInstance.api.getUsers()
-                    Toast.makeText(requireContext(), "Fetched ${users.size} users.", Toast.LENGTH_SHORT).show()
+                    val heroes: List<HeroModel> = RetrofitInstance.api.getUsers()
+                    Toast.makeText(requireContext(), "Fetched ${heroes.size} users.", Toast.LENGTH_SHORT).show()
 
-                    // Convert List to MutableList and add placeholder
-                    remainingHeroes.addAll(users)
-                    remainingHeroes.add(HeroModel(0, "", "", "No more heroes nearby", "", "", "", "", true)) // Add placeholder
+                    remainingHeroes.addAll(heroes)
+                    remainingHeroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
                 }
                 heroCardAdapter = HeroCardAdapter(remainingHeroes)
                 recyclerView.adapter = heroCardAdapter

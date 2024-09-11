@@ -1,6 +1,6 @@
 package fragments
 
-import utils.HeroModel
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,10 +42,10 @@ class RatedHeroesFragment : Fragment() {
     }
 
     private fun displayHeroes(type: String) {
-        val heroes: List<HeroModel> = if (type == "liked") {
-            HomeFragment.likedHeroes
-        } else {
-            HomeFragment.dislikedHeroes
+        val heroes = when (type) {
+            "liked" -> HomeFragment.likedHeroes
+            "disliked" -> HomeFragment.dislikedHeroes
+            else -> emptyList()
         }
 
         heroCardAdapter = HeroCardAdapter(heroes.toMutableList())
