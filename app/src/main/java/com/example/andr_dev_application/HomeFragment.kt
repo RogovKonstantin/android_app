@@ -20,6 +20,7 @@ class HomeFragment : Fragment() {
     companion object {
         val likedHeroes = mutableListOf<HeroModel>()
         val dislikedHeroes = mutableListOf<HeroModel>()
+        val remainingHeroes = mutableListOf<HeroModel>()
     }
 
     override fun onCreateView(
@@ -36,13 +37,15 @@ class HomeFragment : Fragment() {
     private fun fetchUsers() {
         lifecycleScope.launch {
             try {
-                val users: List<HeroModel> = RetrofitInstance.api.getUsers()
-                Toast.makeText(requireContext(), "Fetched ${users.size} users.", Toast.LENGTH_SHORT).show()
+                if (remainingHeroes.isEmpty()) {
+                    val users: List<HeroModel> = RetrofitInstance.api.getUsers()
+                    Toast.makeText(requireContext(), "Fetched ${users.size} users.", Toast.LENGTH_SHORT).show()
 
-                // Convert List to MutableList and add placeholder
-                val mutableUsers = users.toMutableList()
-                mutableUsers.add(HeroModel(0, "", "", "No more heroes nearby", "", "", "", "", true)) // Add placeholder
-                heroCardAdapter = HeroCardAdapter(mutableUsers)
+                    // Convert List to MutableList and add placeholder
+                    remainingHeroes.addAll(users)
+                    remainingHeroes.add(HeroModel(0, "", "", "No more heroes nearby", "", "", "", "", true)) // Add placeholder
+                }
+                heroCardAdapter = HeroCardAdapter(remainingHeroes)
                 recyclerView.adapter = heroCardAdapter
                 recyclerView.layoutManager = StackLayoutManager(requireContext())
             } catch (e: Exception) {
@@ -80,6 +83,7 @@ class HomeFragment : Fragment() {
 
                 // Remove the card
                 heroCardAdapter.removeHeroAt(position)
+                remainingHeroes.remove(hero)
             }
         }
 
