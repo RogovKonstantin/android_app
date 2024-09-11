@@ -14,10 +14,10 @@ class HeroCardAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_HERO = 1
-    private val VIEW_TYPE_NO_MORE = 2
+    private val VIEW_TYPE_NO_MORE_CARDS = 2
 
     override fun getItemViewType(position: Int): Int {
-        return if (heroes[position].isPlaceholder) VIEW_TYPE_NO_MORE else VIEW_TYPE_HERO
+        return if (heroes[position].isPlaceholder) VIEW_TYPE_NO_MORE_CARDS else VIEW_TYPE_HERO
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -26,7 +26,7 @@ class HeroCardAdapter(
             HeroViewHolder(view)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.no_more_card, parent, false)
-            NoMoreViewHolder(view)
+            NoMoreCardsViewHolder(view)
         }
     }
 
@@ -36,9 +36,8 @@ class HeroCardAdapter(
             holder.userName.text = hero.firstName
             holder.userDescription.text = hero.lastName
             Glide.with(holder.itemView.context).load(hero.imageUrl).into(holder.userImage)
-        } else if (holder is NoMoreViewHolder) {
-            holder.placeholderText.text = "No more heroes nearby"
         }
+
     }
 
     override fun getItemCount(): Int = heroes.size
@@ -48,7 +47,8 @@ class HeroCardAdapter(
             heroes.removeAt(position)
             notifyItemRemoved(position)
             if (heroes.isEmpty()) {
-                heroes.add(HeroModel(0, "", "", "No more heroes nearby", "", "", "", "", true))
+
+                heroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
                 notifyItemInserted(0)
             }
         }
@@ -64,7 +64,6 @@ class HeroCardAdapter(
         val userImage: ImageView = view.findViewById(R.id.user_image)
     }
 
-    class NoMoreViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val placeholderText: TextView = view.findViewById(R.id.placeholder_text)
+    class NoMoreCardsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 }
