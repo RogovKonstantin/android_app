@@ -71,30 +71,32 @@ class HomeFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val hero = heroCardAdapter.getHeroAt(position)
+                val position = viewHolder.bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val hero = heroCardAdapter.getHeroAt(position)
 
-                if (hero.isPlaceholder) {
-                    // If the card is a placeholder, reset the swipe
-                    heroCardAdapter.notifyItemChanged(position)
-                    return
+                    if (hero.isPlaceholder) {
+
+                        heroCardAdapter.notifyItemChanged(position)
+                        return
+                    }
+
+                    if (direction == ItemTouchHelper.RIGHT) {
+                        likeHero(hero)
+                    } else if (direction == ItemTouchHelper.LEFT) {
+                        dislikeHero(hero)
+                    }
+
+                    heroCardAdapter.removeHeroAt(position)
+                    remainingHeroes.remove(hero)
                 }
-
-                if (direction == ItemTouchHelper.RIGHT) {
-                    likeHero(hero)
-                } else if (direction == ItemTouchHelper.LEFT) {
-                    dislikeHero(hero)
-                }
-
-                // Remove the card
-                heroCardAdapter.removeHeroAt(position)
-                remainingHeroes.remove(hero)
             }
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
+
 
     private fun likeHero(hero: HeroModel) {
         likedHeroes.add(hero)

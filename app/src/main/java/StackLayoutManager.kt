@@ -1,7 +1,6 @@
 package com.example.andr_dev_application
 
 import android.content.Context
-import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 

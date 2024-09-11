@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
-                android:text="Search" />
+                android:text="@string/search" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_function2"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
-                android:text="Swipes" />
+                android:text="@string/swipes" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_function3"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
-                android:text="Likes" />
+                android:text="@string/likes" />
         </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

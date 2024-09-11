@@ -9,6 +9,7 @@
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/onboarding_sign_in_background"
         android:scaleType="centerCrop"
         android:src="@drawable/img" />
 
@@ -26,7 +27,7 @@
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/gothic"
             android:gravity="center"
-            android:text="GOT Heroes"
+            android:text="@string/got_heroes"
             android:textColor="@android:color/white"
             android:textSize="60sp"
             />
@@ -46,7 +47,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
             android:padding="16dp"
-            android:text="Continue"
+            android:text="@string/continue_btn"
             android:textSize="18sp"
             app:backgroundTint="@color/blue" />
     </LinearLayout>

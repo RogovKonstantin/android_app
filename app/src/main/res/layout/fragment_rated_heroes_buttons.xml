@@ -17,14 +17,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Liked Heroes" />
+            android:text="@string/liked_heroes" />
 
         <Button
             android:id="@+id/disliked_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Disliked Heroes"
+            android:text="@string/disliked_heroes"
             android:layout_marginStart="16dp" />
     </LinearLayout>
 </LinearLayout>

@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">Andr_Dev_Application</string>
     <string name="hero_image">Hero Image</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="placeholder_text">No more heroes nearby</string>
+    <string name="disliked_heroes">Disliked Heroes</string>
+    <string name="liked_heroes">Liked Heroes</string>
+    <string name="search">Search</string>
+    <string name="swipes">Swipes</string>
+    <string name="likes">Likes</string>
+    <string name="got_heroes">GOT Heroes</string>
+    <string name="continue_btn">Continue</string>
+    <string name="onboarding_sign_in_background">Onboarding background</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
 </resources>
