@@ -1,4 +1,4 @@
-package com.example.andr_dev_application
+package fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.example.andr_dev_application.R
 
 class RatedHeroesButtonsFragment : Fragment() {
     companion object {

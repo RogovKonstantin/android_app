@@ -1,4 +1,4 @@
-package com.example.andr_dev_application
+package utils
 
 import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager

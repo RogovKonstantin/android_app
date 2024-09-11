@@ -1,3 +1,5 @@
+package utils
+
 data class HeroModel(
     val id: Int,
     val firstName: String,

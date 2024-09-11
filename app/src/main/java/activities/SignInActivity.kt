@@ -1,4 +1,4 @@
-package com.example.andr_dev_application
+package activities
 
 import android.os.Bundle
 import android.widget.EditText
@@ -6,6 +6,7 @@ import com.google.android.material.button.MaterialButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import com.example.andr_dev_application.R
 
 class SignInActivity : AppCompatActivity() {
 

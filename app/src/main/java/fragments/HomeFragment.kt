@@ -1,6 +1,6 @@
-package com.example.andr_dev_application
+package fragments
 
-import HeroModel
+import utils.HeroModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import utils.HeroCardAdapter
+import com.example.andr_dev_application.R
+import utils.StackLayoutManager
 import kotlinx.coroutines.launch
+import utils.api.RetrofitInstance
 
 class HomeFragment : Fragment() {
     companion object {

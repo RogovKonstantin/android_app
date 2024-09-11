@@ -1,4 +1,4 @@
-package com.example.andr_dev_application
+package activities
 
 import android.os.Bundle
 import android.widget.Button
@@ -6,6 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import fragments.FirstFunctionFragment
+import fragments.HomeFragment
+import com.example.andr_dev_application.R
+import fragments.RatedHeroesButtonsFragment
 
 class MainActivity : AppCompatActivity() {
 

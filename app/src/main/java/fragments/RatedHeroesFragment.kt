@@ -1,6 +1,6 @@
-package com.example.andr_dev_application
+package fragments
 
-import HeroModel
+import utils.HeroModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import utils.HeroCardAdapter
+import com.example.andr_dev_application.R
 
 class RatedHeroesFragment : Fragment() {
 
