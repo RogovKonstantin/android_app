@@ -7,7 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 class FirstFunctionFragment : Fragment() {
-
+    companion object {
+        fun newInstance(): FirstFunctionFragment {
+            return FirstFunctionFragment()
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

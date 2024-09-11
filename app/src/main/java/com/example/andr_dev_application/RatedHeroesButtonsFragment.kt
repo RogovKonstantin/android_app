@@ -9,6 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 
 class RatedHeroesButtonsFragment : Fragment() {
+    companion object {
+        fun newInstance(): RatedHeroesButtonsFragment {
+            return RatedHeroesButtonsFragment()
+        }
+    }
 
     private lateinit var likedButton: Button
     private lateinit var dislikedButton: Button

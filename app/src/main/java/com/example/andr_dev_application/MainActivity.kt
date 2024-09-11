@@ -13,9 +13,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonFunction2: Button
     private lateinit var buttonFunction3: Button
 
-    private var firstFunctionFragment: Fragment? = null
-    private var homeFragment: Fragment? = null
-    private var ratedHeroesButtonsFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +41,6 @@ class MainActivity : AppCompatActivity() {
             showFragment(RatedHeroesButtonsFragment::class.java)
         }
 
-        // Load the HomeFragment by default
         showFragment(HomeFragment::class.java)
     }
 
@@ -52,8 +48,8 @@ class MainActivity : AppCompatActivity() {
         val buttons = listOf(buttonFunction1, buttonFunction2, buttonFunction3)
         buttons.forEach { button ->
             button.isSelected = button == selectedButton
-            button.scaleX = if (button.isSelected) 1.2f else 1.0f
-            button.scaleY = if (button.isSelected) 1.2f else 1.0f
+            button.scaleX = if (button.isSelected) 1.1f else 1.0f
+            button.scaleY = if (button.isSelected) 1.1f else 1.0f
         }
     }
 
@@ -61,14 +57,18 @@ class MainActivity : AppCompatActivity() {
         val fragmentManager: FragmentManager = supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
 
-        // Hide all fragments
         fragmentManager.fragments.forEach { fragmentTransaction.hide(it) }
 
-        // Show the selected fragment
         val tag = fragmentClass.simpleName
         var fragment = fragmentManager.findFragmentByTag(tag)
+
         if (fragment == null) {
-            fragment = fragmentClass.newInstance()
+            fragment = when (fragmentClass) {
+                FirstFunctionFragment::class.java -> FirstFunctionFragment.newInstance()
+                HomeFragment::class.java -> HomeFragment.newInstance()
+                RatedHeroesButtonsFragment::class.java -> RatedHeroesButtonsFragment.newInstance()
+                else -> throw IllegalArgumentException("Unknown Fragment class")
+            }
             fragmentTransaction.add(R.id.fragment_container, fragment, tag)
         } else {
             fragmentTransaction.show(fragment)
@@ -76,4 +76,5 @@ class MainActivity : AppCompatActivity() {
 
         fragmentTransaction.commit()
     }
+
 }

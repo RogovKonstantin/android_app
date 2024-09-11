@@ -13,15 +13,20 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var heroCardAdapter: HeroCardAdapter
-
     companion object {
+        fun newInstance(): HomeFragment {
+            return HomeFragment()
+        }
+
         val likedHeroes = mutableListOf<HeroModel>()
         val dislikedHeroes = mutableListOf<HeroModel>()
         val remainingHeroes = mutableListOf<HeroModel>()
     }
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var heroCardAdapter: HeroCardAdapter
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
