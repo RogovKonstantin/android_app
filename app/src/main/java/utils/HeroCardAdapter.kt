@@ -37,21 +37,25 @@ class HeroCardAdapter(
             holder.userDescription.text = hero.lastName
             Glide.with(holder.itemView.context).load(hero.imageUrl).into(holder.userImage)
         }
-
     }
 
-    override fun getItemCount(): Int = heroes.size
+    override fun getItemCount(): Int {
+        return heroes.size
+    }
 
     fun removeHeroAt(position: Int) {
         if (position < heroes.size) {
             heroes.removeAt(position)
             notifyItemRemoved(position)
             if (heroes.isEmpty()) {
-
-                heroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
-                notifyItemInserted(0)
+                addPlaceholder()
             }
         }
+    }
+
+    private fun addPlaceholder() {
+        heroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
+        notifyItemInserted(0)
     }
 
     fun getHeroAt(position: Int): HeroModel {
@@ -64,6 +68,5 @@ class HeroCardAdapter(
         val userImage: ImageView = view.findViewById(R.id.hero_image)
     }
 
-    class NoMoreCardsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    }
+    class NoMoreCardsViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

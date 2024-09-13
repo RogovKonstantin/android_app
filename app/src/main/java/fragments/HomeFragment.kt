@@ -36,12 +36,12 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
-        fetchUsers()
+        fetchHeroes()
         setupSwipeGesture()
         return view
     }
 
-    private fun fetchUsers() {
+    private fun fetchHeroes() {
         lifecycleScope.launch {
             try {
                 if (remainingHeroes.isEmpty()) {
@@ -77,7 +77,6 @@ class HomeFragment : Fragment() {
                     val hero = heroCardAdapter.getHeroAt(position)
 
                     if (hero.isPlaceholder) {
-
                         heroCardAdapter.notifyItemChanged(position)
                         return
                     }
@@ -97,7 +96,6 @@ class HomeFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
-
 
     private fun likeHero(hero: HeroModel) {
         likedHeroes.add(hero)
