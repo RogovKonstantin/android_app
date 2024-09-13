@@ -28,7 +28,7 @@
             android:exported="false" />
         <activity
             android:name="activities.OnboardingActivity"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>
