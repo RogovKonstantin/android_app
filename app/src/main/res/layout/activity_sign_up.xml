@@ -30,8 +30,19 @@
             android:id="@+id/email_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/username"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/rounded_background" />
+
+        <EditText
+            android:id="@+id/username_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/username"
+            android:inputType="textPersonName"
             android:padding="16dp"
             android:layout_marginBottom="16dp"
             android:textColor="@android:color/black"
@@ -44,31 +55,21 @@
             android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="16dp"
+            android:layout_marginBottom="16dp"
             android:textColor="@android:color/black"
             android:background="@drawable/rounded_background" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/login_button"
+            android:id="@+id/register_button"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="32dp"
             android:padding="16dp"
-            android:text="@string/login"
+            android:text="@string/sign_up"
             android:textSize="18sp"
             app:backgroundTint="@color/blue" />
-
-        <TextView
-            android:id="@+id/sign_up_link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up"
-            android:textColor="@color/blue"
-            android:textSize="16sp"
-            android:layout_gravity="center"
-            android:clickable="true"
-            android:focusable="true" />
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

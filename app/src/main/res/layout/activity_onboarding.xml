@@ -9,7 +9,7 @@
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/onboarding_sign_in_background"
+        android:contentDescription="@string/background"
         android:scaleType="centerCrop"
         android:src="@drawable/img" />
 
