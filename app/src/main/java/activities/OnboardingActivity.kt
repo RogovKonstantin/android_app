@@ -1,7 +1,6 @@
 package activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import android.content.Intent
 import com.example.andr_dev_application.R

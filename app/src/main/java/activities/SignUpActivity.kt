@@ -1,14 +1,14 @@
 package activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import com.google.android.material.button.MaterialButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import android.content.Intent
 import com.example.andr_dev_application.R
 
-class SignUpActivity : BaseActivity() {
+class SignUpActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +29,12 @@ class SignUpActivity : BaseActivity() {
                 return@setOnClickListener
             }
 
-            else{
-            Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            val intent = Intent(this, SignInActivity::class.java)
+            intent.putExtra("USERNAME", enteredUsername)
+            intent.putExtra("PASSWORD", enteredPassword)
             startActivity(intent)
-            finish()}
+            finish()
         }
     }
 }
