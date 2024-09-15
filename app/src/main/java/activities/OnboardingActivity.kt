@@ -6,7 +6,7 @@ import com.google.android.material.button.MaterialButton
 import android.content.Intent
 import com.example.andr_dev_application.R
 
-class OnboardingActivity : AppCompatActivity() {
+class OnboardingActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

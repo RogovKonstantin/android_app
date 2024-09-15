@@ -9,7 +9,7 @@ import android.content.Intent
 import android.widget.TextView
 import com.example.andr_dev_application.R
 
-class SignInActivity : AppCompatActivity() {
+class SignInActivity : BaseActivity() {
 
     private val validEmail = "q"
     private val validPassword = "q"

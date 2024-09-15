@@ -11,7 +11,7 @@ import fragments.HomeFragment
 import com.example.andr_dev_application.R
 import fragments.RatedHeroesButtonsFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var buttonFunction1: Button
     private lateinit var buttonFunction2: Button

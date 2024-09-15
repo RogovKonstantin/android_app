@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import com.example.andr_dev_application.R
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
