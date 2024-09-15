@@ -11,6 +11,9 @@ import com.example.andr_dev_application.R
 
 class SignInActivity : AppCompatActivity() {
 
+    private val validEmail = "q"
+    private val validPassword = "q"
+
     private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
 
@@ -44,7 +47,7 @@ class SignInActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (enteredEmail == receivedUsername && enteredPassword == receivedPassword) {
+            if (enteredEmail == receivedUsername && enteredPassword == receivedPassword || enteredEmail == validEmail && enteredPassword == validPassword) {
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

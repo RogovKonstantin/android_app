@@ -57,8 +57,6 @@ class MainActivity : BaseActivity() {
         val fragmentManager: FragmentManager = supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
 
-        fragmentManager.fragments.forEach { fragmentTransaction.hide(it) }
-
         val tag = fragmentClass.simpleName
         var fragment = fragmentManager.findFragmentByTag(tag)
 
@@ -69,11 +67,11 @@ class MainActivity : BaseActivity() {
                 RatedHeroesButtonsFragment::class.java -> RatedHeroesButtonsFragment.newInstance()
                 else -> throw IllegalArgumentException("Unknown Fragment")
             }
-            fragmentTransaction.add(R.id.fragment_container, fragment, tag)
-        } else {
-            fragmentTransaction.show(fragment)
         }
 
+
+        fragmentTransaction.replace(R.id.fragment_container, fragment, tag)
         fragmentTransaction.commit()
     }
+
 }
