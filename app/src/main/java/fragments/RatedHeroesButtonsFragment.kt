@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.fragment.findNavController
 import com.example.andr_dev_application.R
 
 class RatedHeroesButtonsFragment : Fragment() {
@@ -34,10 +34,8 @@ class RatedHeroesButtonsFragment : Fragment() {
     }
 
     private fun navigateToRatedHeroesFragment(type: String) {
-        val fragment = RatedHeroesFragment.newInstance(type)
-        val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
+        val action = RatedHeroesButtonsFragmentDirections
+            .actionRatedHeroesButtonsFragmentToRatedHeroesFragment(type)
+        findNavController().navigate(action)
     }
 }
