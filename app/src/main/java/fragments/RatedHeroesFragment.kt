@@ -18,7 +18,7 @@ class RatedHeroesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentRatedHeroesBinding.inflate(inflater, container, false)
         val view = binding.root
 
