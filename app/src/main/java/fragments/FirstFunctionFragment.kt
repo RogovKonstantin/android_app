@@ -7,7 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.andr_dev_application.R
 
-class FirstFunctionFragment : Fragment() {
+class FirstFunctionFragment : BaseFragment() {
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_home
+    }
     companion object {
         fun newInstance(): FirstFunctionFragment {
             return FirstFunctionFragment()

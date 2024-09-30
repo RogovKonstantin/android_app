@@ -16,7 +16,12 @@ import utils.StackLayoutManager
 import kotlinx.coroutines.launch
 import utils.api.RetrofitInstance
 
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_home
+    }
+
     companion object {
         fun newInstance(): HomeFragment {
             return HomeFragment()
@@ -34,8 +39,9 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
-        recyclerView = view.findViewById(R.id.recyclerView)
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+
+        recyclerView = view!!.findViewById(R.id.recyclerView)
         fetchHeroes()
         setupSwipeGesture()
         return view

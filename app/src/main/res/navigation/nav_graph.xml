@@ -1,20 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/onboardingFragment">
 
     <fragment
-        android:id="@+id/firstFunctionFragment"
-        android:name="fragments.FirstFunctionFragment"
-        android:label="First Function"
-        tools:layout="@layout/fragment_first_function" />
+        android:id="@+id/onboardingFragment"
+        android:name="fragments.OnboardingFragment"
+        android:label="Onboarding"
+        tools:layout="@layout/fragment_onboarding">
+        <action
+            android:id="@+id/action_onboardingFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="fragments.SignInFragment"
+        android:label="Sign In"
+        tools:layout="@layout/fragment_sign_in">
+        <action
+            android:id="@+id/action_signInFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="fragments.SignUpFragment"
+        android:label="Sign Up"
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="fragments.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/firstFunctionFragment"
+        android:name="fragments.FirstFunctionFragment"
+        android:label="First Function"
+        tools:layout="@layout/fragment_first_function" />
 
     <fragment
         android:id="@+id/ratedHeroesButtonsFragment"

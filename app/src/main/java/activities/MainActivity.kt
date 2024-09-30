@@ -1,7 +1,6 @@
 package activities
 
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -24,22 +23,6 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         setupActionBarWithNavController(navController)
-
-        val buttonFunction1: Button = findViewById(R.id.button_function1)
-        val buttonFunction2: Button = findViewById(R.id.button_function2)
-        val buttonFunction3: Button = findViewById(R.id.button_function3)
-
-        buttonFunction1.setOnClickListener {
-            navController.navigate(R.id.firstFunctionFragment)
-        }
-
-        buttonFunction2.setOnClickListener {
-            navController.navigate(R.id.homeFragment)
-        }
-
-        buttonFunction3.setOnClickListener {
-            navController.navigate(R.id.ratedHeroesButtonsFragment)
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
