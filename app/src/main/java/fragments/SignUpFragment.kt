@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.andr_dev_application.R
 import com.google.android.material.button.MaterialButton
+import utils.UserCredentials
 
 class SignUpFragment : Fragment() {
 
@@ -33,9 +34,14 @@ class SignUpFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            val userCredentials = UserCredentials(
+                username = enteredUsername,
+                email = enteredEmail,
+                password = enteredPassword
+            )
+
             val bundle = Bundle().apply {
-                putString("USERNAME", enteredUsername)
-                putString("PASSWORD", enteredPassword)
+                putSerializable("USER_CREDENTIALS", userCredentials)
             }
             findNavController().navigate(R.id.action_signUpFragment_to_signInFragment, bundle)
         }

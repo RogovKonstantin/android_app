@@ -12,10 +12,6 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="activities.BaseActivity"
-            android:exported="false" />
-
-        <activity
             android:name="activities.MainActivity"
             android:exported="true">
             <intent-filter>

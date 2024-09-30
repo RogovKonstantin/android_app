@@ -1,4 +1,3 @@
-// OnboardingFragment.kt
 package fragments
 
 import android.os.Bundle

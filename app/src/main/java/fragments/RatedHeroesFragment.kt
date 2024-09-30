@@ -1,6 +1,5 @@
 package fragments
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,18 +15,6 @@ class RatedHeroesFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var heroCardAdapter: HeroCardAdapter
 
-    companion object {
-        private const val ARG_TYPE = "type"
-
-        fun newInstance(type: String): RatedHeroesFragment {
-            val fragment = RatedHeroesFragment()
-            val args = Bundle()
-            args.putString(ARG_TYPE, type)
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,7 +22,7 @@ class RatedHeroesFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_rated_heroes, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
 
-        val type = arguments?.getString(ARG_TYPE) ?: "liked"
+        val type = arguments?.getString("type") ?: "liked"
         displayHeroes(type)
 
         return view

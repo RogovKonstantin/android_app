@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.andr_dev_application.R
 import com.google.android.material.button.MaterialButton
+import utils.UserCredentials
 
 class SignInFragment : Fragment() {
 
@@ -30,14 +31,11 @@ class SignInFragment : Fragment() {
         val loginButton: MaterialButton = view.findViewById(R.id.login_button)
         val signUpLink: TextView = view.findViewById(R.id.sign_up_link)
 
-        val receivedUsername = arguments?.getString("USERNAME")
-        val receivedPassword = arguments?.getString("PASSWORD")
+        val userCredentials = arguments?.getSerializable("USER_CREDENTIALS") as? UserCredentials
 
-        receivedUsername?.let {
-            emailInput.setText(it)
-        }
-        receivedPassword?.let {
-            passwordInput.setText(it)
+        userCredentials?.let {
+            emailInput.setText(it.email)
+            passwordInput.setText(it.password)
         }
 
         loginButton.setOnClickListener {
@@ -49,7 +47,8 @@ class SignInFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            if (enteredEmail == receivedUsername && enteredPassword == receivedPassword || enteredEmail == validEmail && enteredPassword == validPassword) {
+            if ((enteredEmail == userCredentials?.email && enteredPassword == userCredentials.password) ||
+                (enteredEmail == validEmail && enteredPassword == validPassword)) {
                 Toast.makeText(activity, "Login Successful", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_signInFragment_to_homeFragment)
             } else {

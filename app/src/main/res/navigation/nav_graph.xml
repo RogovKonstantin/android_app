@@ -51,20 +51,18 @@
     <fragment
         android:id="@+id/ratedHeroesButtonsFragment"
         android:name="fragments.RatedHeroesButtonsFragment"
-        android:label="Rated Heroes Buttons"
-        tools:layout="@layout/fragment_rated_heroes_buttons">
+        android:label="Rated Heroes Buttons">
         <action
             android:id="@+id/action_ratedHeroesButtonsFragment_to_ratedHeroesFragment"
-            app:destination="@id/ratedHeroesFragment" />
+            app:destination="@id/ratedHeroesFragment">
+            <argument
+                android:name="type"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <fragment
         android:id="@+id/ratedHeroesFragment"
         android:name="fragments.RatedHeroesFragment"
-        android:label="Rated Heroes"
-        tools:layout="@layout/fragment_rated_heroes">
-        <argument
-            android:name="type"
-            app:argType="string" />
-    </fragment>
+        android:label="Rated Heroes" />
 </navigation>
