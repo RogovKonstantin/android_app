@@ -1,6 +1,5 @@
 package fragments
 
-import utils.HeroModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,17 +8,19 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import utils.HeroCardAdapter
-import com.example.andr_dev_application.R
-import utils.StackLayoutManager
+import com.example.andr_dev_application.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
+import utils.HeroCardAdapter
+import utils.HeroModel
+import utils.StackLayoutManager
 import utils.api.RetrofitInstance
 
-class HomeFragment : BaseFragment() {
+class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_home
+    override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding {
+        return FragmentHomeBinding.inflate(inflater, container, false)
     }
+
 
     companion object {
         val likedHeroes = mutableListOf<HeroModel>()
@@ -27,17 +28,13 @@ class HomeFragment : BaseFragment() {
         val remainingHeroes = mutableListOf<HeroModel>()
     }
 
-    private lateinit var recyclerView: RecyclerView
     private lateinit var heroCardAdapter: HeroCardAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-            ?: throw IllegalStateException("View cannot be null")
-
-        recyclerView = view.findViewById(R.id.recyclerView)
+        val view = super.onCreateView(inflater, container, savedInstanceState) as View
         fetchHeroes()
         setupSwipeGesture()
         return view
@@ -54,8 +51,8 @@ class HomeFragment : BaseFragment() {
                     remainingHeroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
                 }
                 heroCardAdapter = HeroCardAdapter(remainingHeroes)
-                recyclerView.adapter = heroCardAdapter
-                recyclerView.layoutManager = StackLayoutManager(requireContext())
+                binding.recyclerView.adapter = heroCardAdapter
+                binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
@@ -96,7 +93,7 @@ class HomeFragment : BaseFragment() {
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
     private fun likeHero(hero: HeroModel) {

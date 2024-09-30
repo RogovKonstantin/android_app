@@ -4,32 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.navigation.fragment.findNavController
-import com.example.andr_dev_application.R
+import com.example.andr_dev_application.databinding.FragmentRatedHeroesButtonsBinding
 
-class RatedHeroesButtonsFragment : BaseFragment() {
+class RatedHeroesButtonsFragment : BaseFragment<FragmentRatedHeroesButtonsBinding>() {
 
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_rated_heroes_buttons
+    override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentRatedHeroesButtonsBinding {
+        return FragmentRatedHeroesButtonsBinding.inflate(inflater, container, false)
     }
-
-    private lateinit var likedButton: Button
-    private lateinit var dislikedButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-            ?: throw IllegalStateException("View cannot be null")
-
-        likedButton = view.findViewById(R.id.liked_button)
-        dislikedButton = view.findViewById(R.id.disliked_button)
-
-        likedButton.setOnClickListener { navigateToRatedHeroesFragment("liked") }
-        dislikedButton.setOnClickListener { navigateToRatedHeroesFragment("disliked") }
-
+        val view = super.onCreateView(inflater, container, savedInstanceState) as View
+        binding.likedButton.setOnClickListener { navigateToRatedHeroesFragment("liked") }
+        binding.dislikedButton.setOnClickListener { navigateToRatedHeroesFragment("disliked") }
         return view
     }
 
