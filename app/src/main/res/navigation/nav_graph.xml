@@ -24,6 +24,10 @@
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
+        <argument
+            android:name="userCredentials"
+            app:argType="utils.UserCredentials"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -64,5 +68,9 @@
     <fragment
         android:id="@+id/ratedHeroesFragment"
         android:name="fragments.RatedHeroesFragment"
-        android:label="Rated Heroes" />
+        android:label="Rated Heroes">
+        <argument
+            android:name="type"
+            app:argType="string" />
+    </fragment>
 </navigation>

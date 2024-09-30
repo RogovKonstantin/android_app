@@ -6,24 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.andr_dev_application.databinding.FragmentRatedHeroesBinding
 import utils.HeroCardAdapter
-import com.example.andr_dev_application.R
 
 class RatedHeroesFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
+    private var _binding: FragmentRatedHeroesBinding? = null
+    private val binding get() = _binding!!
     private lateinit var heroCardAdapter: HeroCardAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_rated_heroes, container, false)
-        recyclerView = view.findViewById(R.id.recyclerView)
+        _binding = FragmentRatedHeroesBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val type = arguments?.getString("type") ?: "liked"
-        displayHeroes(type)
+        val args = RatedHeroesFragmentArgs.fromBundle(requireArguments())
+        displayHeroes(args.type)
 
         return view
     }
@@ -36,7 +36,12 @@ class RatedHeroesFragment : Fragment() {
         }
 
         heroCardAdapter = HeroCardAdapter(heroes.toMutableList())
-        recyclerView.adapter = heroCardAdapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = heroCardAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

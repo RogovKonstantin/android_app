@@ -4,64 +4,61 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.andr_dev_application.R
-import com.google.android.material.button.MaterialButton
-import utils.UserCredentials
+import androidx.navigation.fragment.navArgs
+import com.example.andr_dev_application.databinding.FragmentSignInBinding
 
 class SignInFragment : Fragment() {
 
     private val validEmail = "q"
     private val validPassword = "q"
-
-    private lateinit var emailInput: EditText
-    private lateinit var passwordInput: EditText
+    private var _binding: FragmentSignInBinding? = null
+    private val binding get() = _binding!!
+    private val args: SignInFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_sign_in, container, false)
-        emailInput = view.findViewById(R.id.email_input)
-        passwordInput = view.findViewById(R.id.password_input)
-        val loginButton: MaterialButton = view.findViewById(R.id.login_button)
-        val signUpLink: TextView = view.findViewById(R.id.sign_up_link)
+        _binding = FragmentSignInBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val userCredentials = arguments?.getSerializable("USER_CREDENTIALS") as? UserCredentials
-
-        userCredentials?.let {
-            emailInput.setText(it.email)
-            passwordInput.setText(it.password)
+        args.userCredentials?.let {
+            binding.emailInput.setText(it.email)
+            binding.passwordInput.setText(it.password)
         }
 
-        loginButton.setOnClickListener {
-            val enteredEmail = emailInput.text.toString().trim()
-            val enteredPassword = passwordInput.text.toString().trim()
+        binding.loginButton.setOnClickListener {
+            val enteredEmail = binding.emailInput.text.toString().trim()
+            val enteredPassword = binding.passwordInput.text.toString().trim()
 
             if (enteredEmail.isEmpty() || enteredPassword.isEmpty()) {
                 Toast.makeText(activity, "Enter both email and password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if ((enteredEmail == userCredentials?.email && enteredPassword == userCredentials.password) ||
+            if ((enteredEmail == args.userCredentials?.email && enteredPassword == args.userCredentials!!.password) ||
                 (enteredEmail == validEmail && enteredPassword == validPassword)) {
                 Toast.makeText(activity, "Login Successful", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_signInFragment_to_homeFragment)
+                findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToHomeFragment())
             } else {
                 Toast.makeText(activity, "Invalid Email or Password", Toast.LENGTH_SHORT).show()
             }
         }
 
-        signUpLink.setOnClickListener {
-            emailInput.text.clear()
-            passwordInput.text.clear()
-            findNavController().navigate(R.id.action_signInFragment_to_signUpFragment)
+        binding.signUpLink.setOnClickListener {
+            binding.emailInput.text.clear()
+            binding.passwordInput.text.clear()
+            findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSignUpFragment())
         }
 
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

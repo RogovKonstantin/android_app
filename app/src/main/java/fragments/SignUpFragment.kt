@@ -4,30 +4,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.andr_dev_application.R
-import com.google.android.material.button.MaterialButton
+import com.example.andr_dev_application.databinding.FragmentSignUpBinding
 import utils.UserCredentials
 
 class SignUpFragment : Fragment() {
+
+    private var _binding: FragmentSignUpBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_sign_up, container, false)
-        val emailInput: EditText = view.findViewById(R.id.email_input)
-        val usernameInput: EditText = view.findViewById(R.id.username_input)
-        val passwordInput: EditText = view.findViewById(R.id.password_input)
-        val registerButton: MaterialButton = view.findViewById(R.id.register_button)
+        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        registerButton.setOnClickListener {
-            val enteredEmail = emailInput.text.toString().trim()
-            val enteredUsername = usernameInput.text.toString().trim()
-            val enteredPassword = passwordInput.text.toString().trim()
+        binding.registerButton.setOnClickListener {
+            val enteredEmail = binding.emailInput.text.toString().trim()
+            val enteredUsername = binding.usernameInput.text.toString().trim()
+            val enteredPassword = binding.passwordInput.text.toString().trim()
 
             if (enteredEmail.isEmpty() || enteredUsername.isEmpty() || enteredPassword.isEmpty()) {
                 Toast.makeText(activity, "Enter email, username, and password", Toast.LENGTH_SHORT).show()
@@ -40,12 +38,15 @@ class SignUpFragment : Fragment() {
                 password = enteredPassword
             )
 
-            val bundle = Bundle().apply {
-                putSerializable("USER_CREDENTIALS", userCredentials)
-            }
-            findNavController().navigate(R.id.action_signUpFragment_to_signInFragment, bundle)
+            val action = SignUpFragmentDirections.actionSignUpFragmentToSignInFragment(userCredentials)
+            findNavController().navigate(action)
         }
 
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
