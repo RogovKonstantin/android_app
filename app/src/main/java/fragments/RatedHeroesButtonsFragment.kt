@@ -12,8 +12,9 @@ import com.example.andr_dev_application.R
 class RatedHeroesButtonsFragment : BaseFragment() {
 
     override fun getLayoutId(): Int {
-        return R.layout.fragment_home
+        return R.layout.fragment_rated_heroes_buttons
     }
+
     companion object {
         fun newInstance(): RatedHeroesButtonsFragment {
             return RatedHeroesButtonsFragment()
@@ -27,8 +28,8 @@ class RatedHeroesButtonsFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_rated_heroes_buttons, container, false)
-        likedButton = view.findViewById(R.id.liked_button)
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        likedButton = view!!.findViewById(R.id.liked_button)
         dislikedButton = view.findViewById(R.id.disliked_button)
 
         likedButton.setOnClickListener { navigateToRatedHeroesFragment("liked") }

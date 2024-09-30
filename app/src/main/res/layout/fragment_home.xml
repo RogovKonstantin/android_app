@@ -12,36 +12,5 @@
         android:layout_weight="1"
         android:layout_marginTop="16dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_function1"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="4dp"
-            android:text="@string/search" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_function2"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="4dp"
-            android:text="@string/swipes" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_function3"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="4dp"
-            android:text="@string/likes" />
-    </LinearLayout>
+    <include layout="@layout/buttons_nav" />
 </LinearLayout>

@@ -10,8 +10,9 @@ import com.example.andr_dev_application.R
 class FirstFunctionFragment : BaseFragment() {
 
     override fun getLayoutId(): Int {
-        return R.layout.fragment_home
+        return R.layout.fragment_first_function
     }
+
     companion object {
         fun newInstance(): FirstFunctionFragment {
             return FirstFunctionFragment()
@@ -22,6 +23,6 @@ class FirstFunctionFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_first_function, container, false)
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 }
