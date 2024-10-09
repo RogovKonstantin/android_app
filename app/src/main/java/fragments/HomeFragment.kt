@@ -1,6 +1,7 @@
 package fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.andr_dev_application.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
+import okio.IOException
+import retrofit2.HttpException
 import utils.HeroCardAdapter
 import utils.HeroModel
 import utils.StackLayoutManager
@@ -53,8 +56,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 heroCardAdapter = HeroCardAdapter(remainingHeroes)
                 binding.recyclerView.adapter = heroCardAdapter
                 binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
+            } catch (e: HttpException) {
+                Log.e("HomeFragment", "HTTP error: ${e.message()}")
+                Toast.makeText(requireContext(), "Server error: ${e.message()}", Toast.LENGTH_SHORT).show()
+            } catch (e: IOException) {
+                Log.e("HomeFragment", "Network error: ${e.message}")
+                Toast.makeText(requireContext(), "Network error. Check your connection.", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("HomeFragment", "Unknown error: ${e.message}")
+                Toast.makeText(requireContext(), "An unknown error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }

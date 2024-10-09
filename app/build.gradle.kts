@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("androidx.navigation.safeargs.kotlin")
+    kotlin("plugin.serialization") version "1.9.10"
 }
 
 android {
@@ -58,6 +59,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
+
     implementation(libs.androidx.appcompat)
     implementation("com.google.android.material:material:1.7.0")
     implementation(libs.material)
