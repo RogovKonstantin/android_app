@@ -61,7 +61,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 Toast.makeText(requireContext(), "Server error: ${e.message()}", Toast.LENGTH_SHORT).show()
             } catch (e: IOException) {
                 Log.e("HomeFragment", "Network error: ${e.message}")
-                Toast.makeText(requireContext(), "Network error. Check your connection.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Log.e("HomeFragment", "Unknown error: ${e.message}")
                 Toast.makeText(requireContext(), "An unknown error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
