@@ -4,7 +4,6 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
     private const val BASE_URL = "https://thronesapi.com/api/v2/"
@@ -12,10 +11,17 @@ object RetrofitInstance {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    val retrofit: Retrofit = Retrofit.Builder()
+    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+    private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(json.asConverterFactory(contentType))
         .build()
 
-    val api: ApiService = retrofit.create(ApiService::class.java)
+    private val api: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
+    }
+
+    val repository: HeroRepository by lazy {
+        HeroRepository(api)
+    }
 }
