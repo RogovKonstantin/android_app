@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.andr_dev_application.databinding.ButtonsNavBinding
 import com.example.andr_dev_application.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
 import utils.HeroCardAdapter
@@ -16,11 +19,11 @@ import utils.HeroModel
 import utils.StackLayoutManager
 import utils.api.RetrofitInstance
 
-class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
-    override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding {
-        return FragmentHomeBinding.inflate(inflater, container, false)
-    }
+class HomeFragment : Fragment() {
+
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
 
     companion object {
         val likedHeroes = mutableListOf<HeroModel>()
@@ -34,10 +37,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = super.onCreateView(inflater, container, savedInstanceState) as View
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val view = binding.root
+        setupNavigation()
         fetchHeroes()
         setupSwipeGesture()
         return view
+    }
+
+    private fun setupNavigation() {
+        val navBinding = ButtonsNavBinding.bind(binding.root)
+        navBinding.buttonFunction1.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFirstFunctionFragment())
+        }
+        navBinding.buttonFunction3.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToRatedHeroesButtonsFragment())
+        }
     }
 
     private fun fetchHeroes() {
@@ -64,8 +79,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             }
         }
     }
-
-
 
     private fun setupSwipeGesture() {
         val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
@@ -112,5 +125,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private fun dislikeHero(hero: HeroModel) {
         dislikedHeroes.add(hero)
         Toast.makeText(requireContext(), "Disliked ${hero.firstName}", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

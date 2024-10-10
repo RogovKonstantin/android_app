@@ -4,6 +4,6 @@ import retrofit2.http.GET
 import utils.HeroModel
 
 interface ApiService {
-    @GET("Heroes")
+    @GET("Characters")
     suspend fun getHeroes(): List<HeroModel>
 }
