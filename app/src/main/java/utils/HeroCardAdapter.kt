@@ -47,15 +47,15 @@ class HeroCardAdapter(
         if (position < heroes.size) {
             heroes.removeAt(position)
             notifyItemRemoved(position)
-            if (heroes.isEmpty()) {
-                addPlaceholder()
-            }
+            ensurePlaceholder()
         }
     }
 
-    private fun addPlaceholder() {
-        heroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
-        notifyItemInserted(0)
+    fun ensurePlaceholder() {
+        if (heroes.isEmpty() || !heroes.last().isPlaceholder) {
+            heroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
+            notifyItemInserted(heroes.size - 1)
+        }
     }
 
     fun getHeroAt(position: Int): HeroModel {

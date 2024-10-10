@@ -16,7 +16,7 @@ class HeroRepository(private val apiService: ApiService) {
     suspend fun fetchHeroes(): List<HeroModel> {
         return withContext(Dispatchers.IO) {
             try {
-                val heroList = apiService.getUsers()
+                val heroList = apiService.getHeroes()
                 _heroes = heroList
                 heroList
             } catch (e: HttpException) {

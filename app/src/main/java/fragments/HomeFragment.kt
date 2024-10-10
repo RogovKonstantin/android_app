@@ -52,18 +52,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     Toast.makeText(requireContext(), "Fetched ${heroes.size} users.", Toast.LENGTH_SHORT).show()
 
                     remainingHeroes.addAll(heroes)
-                    remainingHeroes.add(HeroModel(0, "", "", "", "", "", "", "", true))
                 }
 
                 heroCardAdapter = HeroCardAdapter(remainingHeroes)
                 binding.recyclerView.adapter = heroCardAdapter
                 binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
+                heroCardAdapter.ensurePlaceholder()
             } catch (e: Exception) {
                 Log.e("HomeFragment", "Error: ${e.message}")
                 Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
 
     private fun setupSwipeGesture() {
