@@ -52,18 +52,18 @@
         android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_firstFunctionFragment"
-            app:destination="@id/firstFunctionFragment" />
+            android:id="@+id/action_homeFragment_to_settingFragments"
+            app:destination="@id/settingsFragment" />
         <action
             android:id="@+id/action_homeFragment_to_ratedHeroesButtonsFragment"
             app:destination="@id/ratedHeroesButtonsFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/firstFunctionFragment"
-        android:name="fragments.FirstFunctionFragment"
+        android:id="@+id/settingsFragment"
+        android:name="fragments.SettingsFragment"
         android:label="First Function"
-        tools:layout="@layout/fragment_first_function">
+        tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_firstFunctionFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -85,8 +85,8 @@
                 app:argType="string" />
         </action>
         <action
-            android:id="@+id/action_ratedHeroesButtonsFragment_to_firstFunctionFragment"
-            app:destination="@id/firstFunctionFragment" />
+            android:id="@+id/action_ratedHeroesButtonsFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
         <action
             android:id="@+id/action_ratedHeroesButtonsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />

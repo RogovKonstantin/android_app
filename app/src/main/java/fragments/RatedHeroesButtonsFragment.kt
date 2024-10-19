@@ -29,7 +29,7 @@ class RatedHeroesButtonsFragment : Fragment() {
     private fun setupNavigation() {
         val navBinding = ButtonsNavBinding.bind(binding.root)
         navBinding.buttonFunction1.setOnClickListener {
-            findNavController().navigate(RatedHeroesButtonsFragmentDirections.actionRatedHeroesButtonsFragmentToFirstFunctionFragment())
+            findNavController().navigate(RatedHeroesButtonsFragmentDirections.actionRatedHeroesButtonsFragmentToSettingsFragment())
         }
         navBinding.buttonFunction2.setOnClickListener {
             findNavController().navigate(RatedHeroesButtonsFragmentDirections.actionRatedHeroesButtonsFragmentToHomeFragment())
