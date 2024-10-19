@@ -18,6 +18,11 @@ import utils.HeroCardAdapter
 import utils.HeroModel
 import utils.StackLayoutManager
 import utils.api.RetrofitInstance
+import android.content.Context
+import android.os.Environment
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 class HomeFragment : Fragment() {
@@ -61,12 +66,15 @@ class HomeFragment : Fragment() {
                 if (remainingHeroes.isEmpty()) {
                     val repository = RetrofitInstance.repository
 
-                    repository.fetchHeroes()
-
-                    val heroes: List<HeroModel> = repository.heroes
-                    Toast.makeText(requireContext(), "Fetched ${heroes.size} users.", Toast.LENGTH_SHORT).show()
-
+                    val heroes = repository.fetchHeroes()
                     remainingHeroes.addAll(heroes)
+
+                    val file = saveHeroesToFile(requireContext(), heroes)
+                    if (file != null) {
+                        Toast.makeText(requireContext(), "Heroes saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to save heroes", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
                 heroCardAdapter = HeroCardAdapter(remainingHeroes)
@@ -77,6 +85,24 @@ class HomeFragment : Fragment() {
                 Log.e("HomeFragment", "Error: ${e.message}")
                 Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+
+    private fun saveHeroesToFile(context: Context, heroes: List<HeroModel>): File? {
+        val fileName = "heroes.txt"
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+
+        try {
+            FileOutputStream(file).use { fos ->
+                heroes.forEach { hero ->
+                    fos.write("${hero.firstName} ${hero.lastName}\n".toByteArray())
+                }
+            }
+            return file
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
         }
     }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Андр_Дев_Приложение</string>
+    <string name="app_name">Andr_Dev_Application</string>
     <string name="hero_image">Изображение героя</string>
     <string name="placeholder_text">Больше нет героев рядом</string>
     <string name="disliked_heroes">Не понравившиеся герои</string>
@@ -20,4 +20,11 @@
     <string name="ui_settings">Настройки интерфейса</string>
     <string name="common">Общие</string>
     <string name="dark_theme">Тёмная тема</string>
+    <string name="file_status">Статус файла</string>
+    <string name="delete_file">Удалить файл</string>
+    <string name="file_exists">Файл существует</string>
+    <string name="file_does_not_exist">Файл не существует</string>
+    <string name="backup_file_exists">Бэкап существует</string>
+    <string name="backup_file_does_not_exist">Бэкап не существует</string>
+    <string name="restore_file">Восстановить</string>
 </resources>

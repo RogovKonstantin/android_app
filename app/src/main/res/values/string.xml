@@ -20,5 +20,12 @@
     <string name="ui_settings">UI Settings</string>
     <string name="common">Common</string>
     <string name="dark_theme">Dark Theme</string>
+    <string name="file_status">File status</string>
+    <string name="delete_file">Delete File</string>
+    <string name="file_exists">File exists</string>
+    <string name="file_does_not_exist">File does not exist</string>
+    <string name="backup_file_exists">Backup file exists</string>
+    <string name="backup_file_does_not_exist">Backup file does not exist</string>
+    <string name="restore_file">Restore File</string>
 
 </resources>
