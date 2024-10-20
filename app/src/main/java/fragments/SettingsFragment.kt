@@ -19,15 +19,11 @@ import com.example.andr_dev_application.databinding.ButtonsNavBinding
 import com.example.andr_dev_application.databinding.FragmentSettingsBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import utils.FileUtils
 import utils.ThemePreferences
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
 
 class SettingsFragment : Fragment() {
-    //./adb pull /storage/emulated/0/Android/data/com.example.andr_dev_application/files/Documents/heroes.txt
-    //./adb shell ls /storage/emulated/0/Android/data/com.example.andr_dev_application/files/Documents
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
@@ -47,8 +43,8 @@ class SettingsFragment : Fragment() {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         sharedPreferences = requireActivity().getSharedPreferences(LANGUAGE_PREFERENCE, 0)
-
         themePreferences = ThemePreferences(requireContext())
+
         checkFileAndBackupExistence()
 
         binding.deleteFileButton.setOnClickListener {
@@ -60,9 +56,7 @@ class SettingsFragment : Fragment() {
         }
 
         setupThemeSwitch()
-
         setupLanguageSpinner()
-
         setupNavigation()
 
         return binding.root
@@ -91,7 +85,6 @@ class SettingsFragment : Fragment() {
 
     private fun setupLanguageSpinner() {
         val languages = arrayOf("en", "ru")
-
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
@@ -113,9 +106,7 @@ class SettingsFragment : Fragment() {
                 ) {
                     val newLanguage = languages[position]
                     if (newLanguage != selectedLanguage) {
-                        val editor = sharedPreferences.edit()
-                        editor.putString(SELECTED_LANGUAGE, newLanguage)
-                        editor.apply()
+                        sharedPreferences.edit().putString(SELECTED_LANGUAGE, newLanguage).apply()
                         Log.d("SettingsFragment", "Language changed to $newLanguage")
                     }
                 }
@@ -140,17 +131,18 @@ class SettingsFragment : Fragment() {
 
     private fun checkFileAndBackupExistence() {
         val fileName = "heroes.txt"
-        val externalFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+        val externalFile =
+            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
         val internalFile = File(requireContext().filesDir, fileName)
 
-        if (externalFile.exists()) {
+        if (FileUtils.fileExists(externalFile)) {
             binding.fileStatusTextView.setText(R.string.file_exists)
             binding.deleteFileButton.visibility = View.VISIBLE
             binding.restoreFileButton.visibility = View.GONE
         } else {
             binding.fileStatusTextView.setText(R.string.file_does_not_exist)
             binding.deleteFileButton.visibility = View.GONE
-            if (internalFile.exists()) {
+            if (FileUtils.fileExists(internalFile)) {
                 binding.backupFileStatusTextView.setText(R.string.backup_file_exists)
                 binding.restoreFileButton.visibility = View.VISIBLE
             } else {
@@ -162,26 +154,32 @@ class SettingsFragment : Fragment() {
 
     private fun deleteFile() {
         val fileName = "heroes.txt"
-        val externalFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+        val externalFile =
+            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
         val internalFile = File(requireContext().filesDir, fileName)
 
-        if (externalFile.exists()) {
-            try {
-                FileInputStream(externalFile).use { input ->
-                    FileOutputStream(internalFile).use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                if (externalFile.delete()) {
-                    Toast.makeText(requireContext(), "File moved to internal storage", Toast.LENGTH_SHORT).show()
-                    binding.fileStatusTextView.setText(R.string.file_does_not_exist)
+        if (FileUtils.fileExists(externalFile)) {
+            if (FileUtils.copyFile(externalFile, internalFile)) {
+                if (FileUtils.deleteFile(externalFile)) {
+                    Toast.makeText(
+                        requireContext(),
+                        "File moved to internal storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     checkFileAndBackupExistence()
                 } else {
-                    Toast.makeText(requireContext(), "Failed to delete file from external storage", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to delete file from external storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                Toast.makeText(requireContext(), "Failed to move file to internal storage", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to move file to internal storage",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
             Toast.makeText(requireContext(), "File does not exist", Toast.LENGTH_SHORT).show()
@@ -191,36 +189,45 @@ class SettingsFragment : Fragment() {
     private fun restoreFileFromInternalStorage() {
         val fileName = "heroes.txt"
         val internalFile = File(requireContext().filesDir, fileName)
-        val externalFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+        val externalFile =
+            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
 
-        if (internalFile.exists()) {
-            try {
-                FileInputStream(internalFile).use { input ->
-                    FileOutputStream(externalFile).use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                if (internalFile.delete()) {
-                    Toast.makeText(requireContext(), "File restored to external storage", Toast.LENGTH_SHORT).show()
-                    binding.fileStatusTextView.setText(R.string.file_exists)
-                    binding.restoreFileButton.visibility = View.GONE
-                    binding.deleteFileButton.visibility = View.VISIBLE
-                    binding.backupFileStatusTextView.setText(R.string.backup_file_does_not_exist)
+        if (FileUtils.fileExists(internalFile)) {
+            if (FileUtils.copyFile(internalFile, externalFile)) {
+                if (FileUtils.deleteFile(internalFile)) {
+                    Toast.makeText(
+                        requireContext(),
+                        "File restored to external storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    checkFileAndBackupExistence()
                 } else {
-                    Toast.makeText(requireContext(), "Failed to delete file from internal storage", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to delete file from internal storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                Toast.makeText(requireContext(), "Failed to restore file to external storage", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to restore file to external storage",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } else {
-            Toast.makeText(requireContext(), "Backup file does not exist", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Backup file does not exist", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        themeSwitchJob?.cancel()
         _binding = null
     }
+    override fun onStop() {
+        super.onStop()
+        themeSwitchJob?.cancel()
+    }
+
 }

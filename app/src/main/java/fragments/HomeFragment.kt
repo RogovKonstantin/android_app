@@ -20,6 +20,7 @@ import utils.StackLayoutManager
 import utils.api.RetrofitInstance
 import android.content.Context
 import android.os.Environment
+import utils.FileUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -69,7 +70,7 @@ class HomeFragment : Fragment() {
                     val heroes = repository.fetchHeroes()
                     remainingHeroes.addAll(heroes)
 
-                    val file = saveHeroesToFile(requireContext(), heroes)
+                    val file = FileUtils.saveHeroesToFile(requireContext(), heroes)
                     if (file != null) {
                         Toast.makeText(requireContext(), "Heroes saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
                     } else {
