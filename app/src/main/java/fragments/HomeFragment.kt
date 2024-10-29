@@ -61,29 +61,35 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 if (remainingHeroes.isEmpty()) {
-                    val repository = RetrofitInstance.repository
+                    if (isAdded) {
+                        val repository = RetrofitInstance.repository
+                        val heroes = repository.fetchHeroes()
+                        remainingHeroes.addAll(heroes)
 
-                    val heroes = repository.fetchHeroes()
-                    remainingHeroes.addAll(heroes)
-
-                    val file = FileUtils.saveHeroesToFile(requireContext(), heroes)
-                    if (file != null) {
-                        Toast.makeText(requireContext(), "Heroes saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to save heroes", Toast.LENGTH_SHORT).show()
+                        val file = FileUtils.saveHeroesToFile(requireContext(), heroes)
+                        if (file != null) {
+                            Toast.makeText(requireContext(), "Heroes saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Failed to save heroes", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
-                heroCardAdapter = HeroCardAdapter(remainingHeroes)
-                binding.recyclerView.adapter = heroCardAdapter
-                binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
-                heroCardAdapter.ensurePlaceholder()
+                if (isAdded) {
+                    heroCardAdapter = HeroCardAdapter(remainingHeroes)
+                    binding.recyclerView.adapter = heroCardAdapter
+                    binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
+                    heroCardAdapter.ensurePlaceholder()
+                }
             } catch (e: Exception) {
-                Log.e("HomeFragment", "Error: ${e.message}")
-                Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                if (isAdded) {
+                    Log.e("HomeFragment", "Error: ${e.message}")
+                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
+
 
 
     private fun setupSwipeGesture() {

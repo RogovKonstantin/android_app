@@ -33,8 +33,10 @@ class SettingsFragment : Fragment() {
     private val SELECTED_LANGUAGE = "selected_language"
 
     private lateinit var themePreferences: ThemePreferences
-
     private var themeSwitchJob: Job? = null
+
+    private val FILE_NAME = "heroes.txt"
+    private val EXTERNAL_DIR = Environment.DIRECTORY_DOCUMENTS
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,23 +48,28 @@ class SettingsFragment : Fragment() {
         themePreferences = ThemePreferences(requireContext())
 
         checkFileAndBackupExistence()
-
-        binding.deleteFileButton.setOnClickListener {
-            deleteFile()
-        }
-
-        binding.restoreFileButton.setOnClickListener {
-            restoreFileFromInternalStorage()
-        }
-
         setupThemeSwitch()
         setupLanguageSpinner()
         setupNavigation()
+
+        binding.deleteFileButton.setOnClickListener {
+            val externalFile = File(requireContext().getExternalFilesDir(EXTERNAL_DIR), FILE_NAME)
+            val internalFile = File(requireContext().filesDir, FILE_NAME)
+            moveFileToInternalStorage(externalFile, internalFile)
+        }
+
+        binding.restoreFileButton.setOnClickListener {
+            val externalFile = File(requireContext().getExternalFilesDir(EXTERNAL_DIR), FILE_NAME)
+            val internalFile = File(requireContext().filesDir, FILE_NAME)
+            restoreFileToExternalStorage(internalFile, externalFile)
+        }
 
         return binding.root
     }
 
     private fun setupThemeSwitch() {
+        themeSwitchJob?.cancel() // Cancel any existing job before starting a new one
+
         themeSwitchJob = lifecycleScope.launch {
             themePreferences.isDarkMode.collect { isDarkMode ->
                 if (isAdded) {
@@ -96,23 +103,57 @@ class SettingsFragment : Fragment() {
         val selectedLanguage = sharedPreferences.getString(SELECTED_LANGUAGE, "en")
         binding.languageSpinner.setSelection(languages.indexOf(selectedLanguage))
 
-        binding.languageSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val newLanguage = languages[position]
-                    if (newLanguage != selectedLanguage) {
-                        sharedPreferences.edit().putString(SELECTED_LANGUAGE, newLanguage).apply()
-                        Log.d("SettingsFragment", "Language changed to $newLanguage")
-                    }
+        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val newLanguage = languages[position]
+                if (newLanguage != selectedLanguage) {
+                    sharedPreferences.edit().putString(SELECTED_LANGUAGE, newLanguage).apply()
+                    Log.d("SettingsFragment", "Language changed to $newLanguage")
                 }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {}
             }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
+    private fun checkFileAndBackupExistence() {
+        val externalFile = File(requireContext().getExternalFilesDir(EXTERNAL_DIR), FILE_NAME)
+        val internalFile = File(requireContext().filesDir, FILE_NAME)
+
+        val isFileExists = FileUtils.fileExists(externalFile)
+        val isBackupExists = FileUtils.fileExists(internalFile)
+
+        binding.deleteFileButton.visibility = if (isFileExists) View.VISIBLE else View.GONE
+        binding.restoreFileButton.visibility = if (!isFileExists && isBackupExists) View.VISIBLE else View.GONE
+
+        updateFileStatusViews(isFileExists, isBackupExists)
+    }
+
+    private fun updateFileStatusViews(fileExists: Boolean, backupExists: Boolean) {
+        binding.fileStatusTextView.setText(if (fileExists) R.string.file_exists else R.string.file_does_not_exist)
+        binding.backupFileStatusTextView.setText(if (backupExists) R.string.backup_file_exists else R.string.backup_file_does_not_exist)
+    }
+
+    private fun moveFileToInternalStorage(file: File, backup: File) {
+        if (FileUtils.fileExists(file) && FileUtils.copyFile(file, backup) && FileUtils.deleteFile(file)) {
+            showToast("File moved to internal storage")
+            checkFileAndBackupExistence()
+        } else {
+            showToast("Failed to move file")
+        }
+    }
+
+    private fun restoreFileToExternalStorage(backup: File, file: File) {
+        if (FileUtils.fileExists(backup) && FileUtils.copyFile(backup, file) && FileUtils.deleteFile(backup)) {
+            showToast("File restored to external storage")
+            checkFileAndBackupExistence()
+        } else {
+            showToast("Failed to restore file")
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setupNavigation() {
@@ -129,105 +170,14 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun checkFileAndBackupExistence() {
-        val fileName = "heroes.txt"
-        val externalFile =
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
-        val internalFile = File(requireContext().filesDir, fileName)
-
-        if (FileUtils.fileExists(externalFile)) {
-            binding.fileStatusTextView.setText(R.string.file_exists)
-            binding.deleteFileButton.visibility = View.VISIBLE
-            binding.restoreFileButton.visibility = View.GONE
-        } else {
-            binding.fileStatusTextView.setText(R.string.file_does_not_exist)
-            binding.deleteFileButton.visibility = View.GONE
-            if (FileUtils.fileExists(internalFile)) {
-                binding.backupFileStatusTextView.setText(R.string.backup_file_exists)
-                binding.restoreFileButton.visibility = View.VISIBLE
-            } else {
-                binding.backupFileStatusTextView.setText(R.string.backup_file_does_not_exist)
-                binding.restoreFileButton.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun deleteFile() {
-        val fileName = "heroes.txt"
-        val externalFile =
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
-        val internalFile = File(requireContext().filesDir, fileName)
-
-        if (FileUtils.fileExists(externalFile)) {
-            if (FileUtils.copyFile(externalFile, internalFile)) {
-                if (FileUtils.deleteFile(externalFile)) {
-                    Toast.makeText(
-                        requireContext(),
-                        "File moved to internal storage",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    checkFileAndBackupExistence()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to delete file from external storage",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to move file to internal storage",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } else {
-            Toast.makeText(requireContext(), "File does not exist", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun restoreFileFromInternalStorage() {
-        val fileName = "heroes.txt"
-        val internalFile = File(requireContext().filesDir, fileName)
-        val externalFile =
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
-
-        if (FileUtils.fileExists(internalFile)) {
-            if (FileUtils.copyFile(internalFile, externalFile)) {
-                if (FileUtils.deleteFile(internalFile)) {
-                    Toast.makeText(
-                        requireContext(),
-                        "File restored to external storage",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    checkFileAndBackupExistence()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to delete file from internal storage",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to restore file to external storage",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } else {
-            Toast.makeText(requireContext(), "Backup file does not exist", Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        themeSwitchJob?.cancel()
     }
+
     override fun onStop() {
         super.onStop()
         themeSwitchJob?.cancel()
     }
-
 }
