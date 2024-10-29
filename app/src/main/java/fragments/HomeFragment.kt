@@ -18,12 +18,8 @@ import utils.HeroCardAdapter
 import utils.HeroModel
 import utils.StackLayoutManager
 import utils.api.RetrofitInstance
-import android.content.Context
-import android.os.Environment
 import utils.FileUtils
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+
 
 
 class HomeFragment : Fragment() {
@@ -89,23 +85,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
-    private fun saveHeroesToFile(context: Context, heroes: List<HeroModel>): File? {
-        val fileName = "heroes.txt"
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
-
-        try {
-            FileOutputStream(file).use { fos ->
-                heroes.forEach { hero ->
-                    fos.write("${hero.firstName} ${hero.lastName}\n".toByteArray())
-                }
-            }
-            return file
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-    }
 
     private fun setupSwipeGesture() {
         val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
