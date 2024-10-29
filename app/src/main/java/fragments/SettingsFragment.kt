@@ -17,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.andr_dev_application.R
 import com.example.andr_dev_application.databinding.ButtonsNavBinding
 import com.example.andr_dev_application.databinding.FragmentSettingsBinding
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import utils.FileUtils
 import utils.ThemePreferences
@@ -33,7 +32,6 @@ class SettingsFragment : Fragment() {
     private val SELECTED_LANGUAGE = "selected_language"
 
     private lateinit var themePreferences: ThemePreferences
-    private var themeSwitchJob: Job? = null
 
     private val FILE_NAME = "heroes.txt"
     private val EXTERNAL_DIR = Environment.DIRECTORY_DOCUMENTS
@@ -68,9 +66,8 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupThemeSwitch() {
-        themeSwitchJob?.cancel() // Cancel any existing job before starting a new one
 
-        themeSwitchJob = lifecycleScope.launch {
+        lifecycleScope.launch {
             themePreferences.isDarkMode.collect { isDarkMode ->
                 if (isAdded) {
                     binding.themeSwitch.isChecked = isDarkMode
@@ -115,6 +112,8 @@ class SettingsFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
+
+
 
     private fun checkFileAndBackupExistence() {
         val externalFile = File(requireContext().getExternalFilesDir(EXTERNAL_DIR), FILE_NAME)
@@ -173,11 +172,6 @@ class SettingsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        themeSwitchJob?.cancel()
     }
 
-    override fun onStop() {
-        super.onStop()
-        themeSwitchJob?.cancel()
-    }
 }
