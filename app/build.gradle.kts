@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("androidx.navigation.safeargs.kotlin")
     kotlin("plugin.serialization") version "1.9.10"
+    kotlin("kapt")
 }
 
 android {
@@ -58,10 +59,10 @@ android {
 }
 
 dependencies {
-    implementation ("androidx.room:room-runtime:2.5.0")
-    implementation ("androidx.room:room-ktx:2.5.0")
-
-    implementation ("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.room:room-runtime:2.5.0-alpha02")
+    implementation("androidx.room:room-ktx:2.5.0-alpha02")
+    kapt("androidx.room:room-compiler:2.5.0-alpha02")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation(libs.androidx.core.ktx)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
@@ -73,10 +74,8 @@ dependencies {
     val nav_version = "2.8.1"
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
-
     implementation("androidx.navigation:navigation-fragment:$nav_version")
     implementation("androidx.navigation:navigation-ui:$nav_version")
-
     implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
 
     implementation("androidx.recyclerview:recyclerview:1.2.1")

@@ -62,11 +62,13 @@ class HomeFragment : Fragment() {
             try {
                 if (remainingHeroes.isEmpty()) {
                     if (isAdded) {
-                        val repository = RetrofitInstance.repository
-                        val heroes = repository.fetchHeroes()
-                        remainingHeroes.addAll(heroes)
+                        val repository = RetrofitInstance.provideHeroRepository(requireContext())
+                        val apiHeroes = repository.fetchHeroes()
+                        repository.saveHeroesToLocal(apiHeroes)
+                        val localHeroes = repository.fetchHeroesFromLocal()
+                        remainingHeroes.addAll(localHeroes)
 
-                        val file = FileUtils.saveHeroesToFile(requireContext(), heroes)
+                        val file = FileUtils.saveHeroesToFile(requireContext(), localHeroes)
                         if (file != null) {
                             Toast.makeText(requireContext(), "Heroes saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
                         } else {

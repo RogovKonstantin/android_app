@@ -12,4 +12,5 @@ class HeroDbRepository(private val heroDao: HeroDao) {
     suspend fun deleteAllHeroes() {
         heroDao.deleteAllHeroes()
     }
+
 }

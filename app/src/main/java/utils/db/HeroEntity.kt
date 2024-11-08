@@ -8,7 +8,9 @@ data class HeroEntity(
     @PrimaryKey val id: Int,
     val firstName: String,
     val lastName: String,
+    val fullName: String,
     val title: String,
     val family: String,
-    val imageUrl: String
+    val image: String,
+    val imageUrl: String,
 )

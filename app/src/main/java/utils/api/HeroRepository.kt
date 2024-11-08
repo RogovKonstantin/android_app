@@ -8,7 +8,10 @@ import utils.db.HeroDbRepository
 import utils.db.HeroEntity
 import java.io.IOException
 
-class HeroRepository(private val apiService: ApiService, private val heroDbRepository:HeroDbRepository) {
+class HeroRepository(
+    private val apiService: ApiService,
+    private val heroDbRepository: HeroDbRepository
+) {
 
     private var _heroes: List<HeroModel>? = null
 
@@ -28,21 +31,37 @@ class HeroRepository(private val apiService: ApiService, private val heroDbRepos
             }
         }
     }
+
     suspend fun saveHeroesToLocal(heroes: List<HeroModel>) {
         val heroEntities = heroes.map { hero ->
             HeroEntity(
                 id = hero.id,
                 firstName = hero.firstName,
                 lastName = hero.lastName,
+                fullName = hero.fullName,
                 title = hero.title,
                 family = hero.family,
+                image = hero.image,
                 imageUrl = hero.imageUrl
             )
         }
         heroDbRepository.saveHeroes(heroEntities)
     }
 
-    suspend fun fetchHeroesFromLocal(): List<HeroEntity> {
-        return heroDbRepository.getHeroes()
+    suspend fun fetchHeroesFromLocal(): List<HeroModel> {
+        val heroEntities = heroDbRepository.getHeroes()
+        return heroEntities.map { entity ->
+            HeroModel(
+                id = entity.id,
+                firstName = entity.firstName,
+                lastName = entity.lastName,
+                fullName = entity.fullName,
+                title = entity.title,
+                family = entity.family,
+                image = entity.image,
+                imageUrl = entity.imageUrl,
+                isPlaceholder = false
+            )
+        }
     }
 }
