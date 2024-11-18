@@ -1,16 +1,22 @@
 package utils.db
 
+import androidx.lifecycle.LiveData
+
 class HeroDbRepository(private val heroDao: HeroDao) {
-    suspend fun saveHeroes(heroes: List<HeroEntity>) {
+
+   fun saveHeroes(heroes: List<HeroEntity>) {
         heroDao.insertHeroes(heroes)
     }
 
-    suspend fun getHeroes(): List<HeroEntity> {
+    fun getHeroes(): LiveData<List<HeroEntity>> {
         return heroDao.getAllHeroes()
     }
 
-    suspend fun deleteAllHeroes() {
+    fun deleteAllHeroes() {
         heroDao.deleteAllHeroes()
+    }
+    fun getHeroesDirectly(): List<HeroEntity> {
+        return heroDao.getAllHeroesDirectly()
     }
 
 }

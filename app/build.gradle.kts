@@ -21,6 +21,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        kapt {
+            arguments {
+                mapOf("room.schemaLocation" to "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -48,7 +53,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     packagingOptions {
@@ -59,16 +64,17 @@ android {
 }
 
 dependencies {
-    implementation("androidx.room:room-runtime:2.5.0-alpha02")
-    implementation("androidx.room:room-ktx:2.5.0-alpha02")
-    kapt("androidx.room:room-compiler:2.5.0-alpha02")
+    implementation("androidx.room:room-runtime:2.5.1")
+    implementation("androidx.room:room-ktx:2.5.1")
+    kapt("androidx.room:room-compiler:2.5.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation(libs.androidx.core.ktx)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
     implementation(libs.androidx.appcompat)
-    implementation("com.google.android.material:material:1.7.0")
     implementation(libs.material)
 
     val nav_version = "2.8.1"
@@ -86,8 +92,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

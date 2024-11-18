@@ -60,36 +60,47 @@ class HomeFragment : Fragment() {
     private fun fetchHeroes() {
         lifecycleScope.launch {
             try {
-                if (remainingHeroes.isEmpty()) {
-                    if (isAdded) {
-                        val repository = RetrofitInstance.provideHeroRepository(requireContext())
-                        val apiHeroes = repository.fetchHeroes()
-                        repository.saveHeroesToLocal(apiHeroes)
-                        val localHeroes = repository.fetchHeroesFromLocal()
-                        remainingHeroes.addAll(localHeroes)
+                if (remainingHeroes.isEmpty() && isAdded) {
+                    val repository = RetrofitInstance.provideHeroRepository(requireContext())
 
-                        val file = FileUtils.saveHeroesToFile(requireContext(), localHeroes)
-                        if (file != null) {
-                            Toast.makeText(requireContext(), "Heroes saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(requireContext(), "Failed to save heroes", Toast.LENGTH_SHORT).show()
-                        }
+
+                    val apiHeroes = repository.fetchHeroes()
+
+
+                    repository.saveHeroesToLocal(apiHeroes)
+
+
+                    val localHeroes = repository.fetchHeroesFromLocal()
+                    remainingHeroes.addAll(localHeroes)
+
+
+                    val file = FileUtils.saveHeroesToFile(requireContext(), remainingHeroes)
+                    val message = if (file != null) {
+                        "Heroes saved to ${file.absolutePath}"
+                    } else {
+                        "Failed to save heroes"
                     }
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 }
 
                 if (isAdded) {
-                    heroCardAdapter = HeroCardAdapter(remainingHeroes)
-                    binding.recyclerView.adapter = heroCardAdapter
-                    binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
-                    heroCardAdapter.ensurePlaceholder()
+                    setupHeroRecyclerView()
                 }
             } catch (e: Exception) {
                 if (isAdded) {
-                    Log.e("HomeFragment", "Error: ${e.message}")
-                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                    Log.e("HomeFragment", "Error fetching heroes: ${e.message}", e)
+                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+
+
+    private fun setupHeroRecyclerView() {
+        heroCardAdapter = HeroCardAdapter(remainingHeroes)
+        binding.recyclerView.adapter = heroCardAdapter
+        binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
+        heroCardAdapter.ensurePlaceholder()
     }
 
 
