@@ -1,6 +1,8 @@
 package utils.api
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import utils.HeroModel
 import utils.db.HeroDbRepository
@@ -39,9 +41,9 @@ class HeroRepository(
         }
     }
 
-    suspend fun fetchHeroesFromLocal(): List<HeroModel> {
-        return withContext(Dispatchers.IO) {
-            heroDbRepository.getHeroesDirectly().map { entity ->
+    fun fetchHeroesFromLocal(): Flow<List<HeroModel>> {
+        return heroDbRepository.getHeroes().map { entities ->
+            entities.map { entity ->
                 HeroModel(
                     id = entity.id,
                     firstName = entity.firstName,
@@ -55,6 +57,7 @@ class HeroRepository(
                 )
             }
         }
+    }
 
-}}
+}
 

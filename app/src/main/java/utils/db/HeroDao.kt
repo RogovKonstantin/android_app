@@ -1,12 +1,13 @@
 package utils.db
 
-import androidx.lifecycle.LiveData
+
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RewriteQueriesToDropUnusedColumns
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HeroDao {
@@ -16,7 +17,7 @@ interface HeroDao {
 
     @Query("SELECT * FROM heroes")
     @RewriteQueriesToDropUnusedColumns
-    fun getAllHeroes(): LiveData<List<HeroEntity>>
+    fun getAllHeroes(): Flow<List<HeroEntity>>
 
     @Delete
     fun deleteHero(hero: HeroEntity): Int
@@ -24,6 +25,4 @@ interface HeroDao {
     @Query("DELETE FROM heroes")
     fun deleteAllHeroes(): Int
 
-    @Query("SELECT * FROM heroes")
-    fun getAllHeroesDirectly(): List<HeroEntity>
 }

@@ -12,13 +12,23 @@ abstract class AppDb : RoomDatabase() {
     companion object {
         @Volatile private var instance: AppDb? = null
 
-        fun getDatabase(context: Context): AppDb =
-            instance ?: synchronized(this) {
-                instance ?: Room.databaseBuilder(
+        fun getDatabase(context: Context): AppDb {
+            return instance ?: synchronized(this) {
+                val tempInstance = instance
+                if (tempInstance != null) {
+                    return tempInstance
+                }
+
+                val newInstance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDb::class.java,
                     "hero_database"
-                ).build().also { instance = it }
+                ).fallbackToDestructiveMigration()  // Add this if you want to handle schema changes
+                    .build()
+
+                instance = newInstance
+                return newInstance
             }
+        }
     }
 }

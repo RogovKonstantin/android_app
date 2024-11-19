@@ -1,6 +1,7 @@
 package utils.db
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
 class HeroDbRepository(private val heroDao: HeroDao) {
 
@@ -8,15 +9,12 @@ class HeroDbRepository(private val heroDao: HeroDao) {
         heroDao.insertHeroes(heroes)
     }
 
-    fun getHeroes(): LiveData<List<HeroEntity>> {
+    fun getHeroes(): Flow<List<HeroEntity>> {
         return heroDao.getAllHeroes()
     }
 
     fun deleteAllHeroes() {
         heroDao.deleteAllHeroes()
-    }
-    fun getHeroesDirectly(): List<HeroEntity> {
-        return heroDao.getAllHeroesDirectly()
     }
 
 }
