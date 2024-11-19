@@ -137,6 +137,11 @@ class HomeFragment : Fragment() {
                         dislikeHero(hero)
                     }
 
+                    lifecycleScope.launch {
+                        val repository = RetrofitInstance.provideHeroRepository(requireContext())
+                        repository.deleteHero(hero)
+                    }
+
                     heroCardAdapter.removeHeroAt(position)
                 }
             }

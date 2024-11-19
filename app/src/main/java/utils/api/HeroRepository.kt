@@ -59,5 +59,22 @@ class HeroRepository(
         }
     }
 
+    suspend fun deleteHero(hero: HeroModel) {
+        withContext(Dispatchers.IO) {
+            heroDbRepository.deleteHero(
+                HeroEntity(
+                    id = hero.id,
+                    firstName = hero.firstName,
+                    lastName = hero.lastName,
+                    fullName = hero.fullName,
+                    title = hero.title,
+                    family = hero.family,
+                    image = hero.image,
+                    imageUrl = hero.imageUrl
+                )
+            )
+        }
+    }
+
 }
 

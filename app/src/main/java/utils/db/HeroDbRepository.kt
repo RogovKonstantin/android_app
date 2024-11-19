@@ -13,8 +13,9 @@ class HeroDbRepository(private val heroDao: HeroDao) {
         return heroDao.getAllHeroes()
     }
 
-    fun deleteAllHeroes() {
-        heroDao.deleteAllHeroes()
+
+    fun deleteHero(hero: HeroEntity) {
+        heroDao.deleteHero(hero)
     }
 
 }
