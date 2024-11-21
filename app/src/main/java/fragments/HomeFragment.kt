@@ -88,8 +88,8 @@ class HomeFragment : Fragment() {
             try {
                 val apiHeroes = heroApiRepository.fetchHeroes()
                 heroDbRepository.saveHeroesToLocal(apiHeroes)
-                updateHeroList(apiHeroes)
                 saveHeroesToFile(apiHeroes)
+                updateHeroList(heroDbRepository.fetchHeroesFromLocal().first())
             } catch (e: Exception) {
                 showError("Error fetching heroes: ${e.message}")
             }
