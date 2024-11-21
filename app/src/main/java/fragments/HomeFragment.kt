@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.andr_dev_application.databinding.ButtonsNavBinding
 import com.example.andr_dev_application.databinding.FragmentHomeBinding
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import utils.HeroCardAdapter
@@ -31,7 +32,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val remainingHeroes = mutableSetOf<HeroModel>()
+    private val remainingHeroes = mutableListOf<HeroModel>()
 
     companion object {
         val likedHeroes = mutableListOf<HeroModel>()
@@ -53,6 +54,8 @@ class HomeFragment : Fragment() {
         setupNavigation()
         observeHeroes()
         setupSwipeGesture()
+        setupFetchHeroesButton()
+
         return binding.root
     }
 
@@ -67,8 +70,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeHeroes() {
-        setupFetchHeroesButton()
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 heroDbRepository.fetchHeroesFromLocal().collect { heroes ->
@@ -76,7 +77,6 @@ class HomeFragment : Fragment() {
                     remainingHeroes.addAll(heroes)
                     setupHeroRecyclerView(remainingHeroes.toList())
 
-                    // Если список пуст, вызываем fetchHeroes только для получения данных
                     if (heroes.isEmpty()) {
                         fetchHeroes()
                     }
@@ -93,13 +93,16 @@ class HomeFragment : Fragment() {
                     val apiHeroes = heroApiRepository.fetchHeroes()
                     heroDbRepository.saveHeroesToLocal(apiHeroes)
                     remainingHeroes.addAll(apiHeroes)
-                    val heroesFile = FileUtils.saveHeroesToFile(requireContext(), remainingHeroes.toList())
+                    val heroesFile =
+                        FileUtils.saveHeroesToFile(requireContext(), remainingHeroes.toList())
 
-                    if (heroesFile != null) {
-                        showToast("Heroes saved to ${heroesFile.absolutePath}")
-                    } else {
-                        showToast("Failed to save heroes")
-                    }
+                    showToast(
+                        if (heroesFile != null)
+                            "Heroes saved to ${heroesFile.absolutePath}"
+                        else
+                            "Failed to save heroes"
+                    )
+
                     setupHeroRecyclerView(remainingHeroes.toList())
                 }
             } catch (e: Exception) {
@@ -109,9 +112,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupHeroRecyclerView(heroes: List<HeroModel>) {
-        heroCardAdapter = HeroCardAdapter(heroes.toMutableList()).apply {
-            ensurePlaceholder()
-        }
+        heroCardAdapter = HeroCardAdapter(heroes.toMutableList()).apply { ensurePlaceholder() }
         binding.recyclerView.adapter = heroCardAdapter
         binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
     }
@@ -205,5 +206,6 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        lifecycleScope.coroutineContext.cancel()
     }
 }
