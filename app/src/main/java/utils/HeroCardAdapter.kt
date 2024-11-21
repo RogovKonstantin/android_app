@@ -70,3 +70,4 @@ class HeroCardAdapter(
 
     class NoMoreCardsViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }
+

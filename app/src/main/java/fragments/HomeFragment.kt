@@ -49,6 +49,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         heroDbRepository = RepositoryProvider.provideHeroDbRepository(requireContext())
         heroApiRepository = RepositoryProvider.provideHeroApiRepository(RetrofitInstance.api)
+
         setupNavigation()
         observeHeroes()
         setupSwipeGesture()
@@ -87,24 +88,13 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val localHeroes = heroDbRepository.fetchHeroesFromLocal().first()
-
                 if (localHeroes.isEmpty()) {
                     val apiHeroes = heroApiRepository.fetchHeroes()
                     heroDbRepository.saveHeroesToLocal(apiHeroes)
                     remainingHeroes.addAll(apiHeroes)
-
                     FileUtils.saveHeroesToFile(requireContext(), remainingHeroes.toList())
-                        ?.let { file ->
-                            Toast.makeText(
-                                requireContext(),
-                                "Heroes saved to ${file.absolutePath}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } ?: Toast.makeText(
-                        requireContext(),
-                        "Failed to save heroes",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                        ?.let { file -> showToast("Heroes saved to ${file.absolutePath}") }
+                        ?: showToast("Failed to save heroes")
 
                     setupHeroRecyclerView(remainingHeroes.toList())
                 } else {
@@ -112,15 +102,15 @@ class HomeFragment : Fragment() {
                     setupHeroRecyclerView(remainingHeroes.toList())
                 }
             } catch (e: Exception) {
-                Log.e("HomeFragment", "Error fetching heroes: ${e.message}", e)
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                showError("Error fetching heroes: ${e.message}")
             }
         }
     }
 
     private fun setupHeroRecyclerView(heroes: List<HeroModel>) {
-        heroCardAdapter = HeroCardAdapter(heroes.toMutableList())
-        heroCardAdapter.ensurePlaceholder()
+        heroCardAdapter = HeroCardAdapter(heroes.toMutableList()).apply {
+            ensurePlaceholder()
+        }
         binding.recyclerView.adapter = heroCardAdapter
         binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
     }
@@ -144,16 +134,7 @@ class HomeFragment : Fragment() {
                         return
                     }
 
-                    if (direction == ItemTouchHelper.RIGHT) {
-                        likeHero(hero)
-                    } else if (direction == ItemTouchHelper.LEFT) {
-                        dislikeHero(hero)
-                    }
-
-                    lifecycleScope.launch {
-                        heroDbRepository.deleteHero(hero)
-                    }
-
+                    handleHeroSwipe(hero, direction)
                     heroCardAdapter.removeHeroAt(position)
                 }
             }
@@ -163,52 +144,61 @@ class HomeFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
+    private fun handleHeroSwipe(hero: HeroModel, direction: Int) {
+        if (direction == ItemTouchHelper.RIGHT) {
+            likeHero(hero)
+        } else if (direction == ItemTouchHelper.LEFT) {
+            dislikeHero(hero)
+        }
+
+        lifecycleScope.launch {
+            heroDbRepository.deleteHero(hero)
+        }
+    }
+
+    private fun likeHero(hero: HeroModel) {
+        likedHeroes.add(hero)
+        showToast("Liked ${hero.firstName}")
+    }
+
+    private fun dislikeHero(hero: HeroModel) {
+        dislikedHeroes.add(hero)
+        showToast("Disliked ${hero.firstName}")
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showError(message: String) {
+        Log.e("HomeFragment", message)
+        Toast.makeText(requireContext(), "Error: $message", Toast.LENGTH_SHORT).show()
+    }
+
     private fun setupFetchHeroesButton() {
         binding.fetchHeroesButton.setOnClickListener {
             lifecycleScope.launch {
                 try {
                     val apiHeroes = heroApiRepository.fetchHeroes()
-
                     val localHeroes = heroDbRepository.fetchHeroesFromLocal().first()
-
                     val existingHeroIds = localHeroes.map { it.id }.toSet()
                     val newHeroes = apiHeroes.filter { it.id !in existingHeroIds }
 
                     if (newHeroes.isNotEmpty()) {
                         heroDbRepository.saveHeroesToLocal(newHeroes)
-                        Toast.makeText(
-                            requireContext(),
-                            "New heroes added to the database!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showToast("New heroes added to the database!")
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "No new heroes to add.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showToast("No new heroes to add.")
                     }
 
                     remainingHeroes.clear()
                     remainingHeroes.addAll(heroDbRepository.fetchHeroesFromLocal().first())
                     setupHeroRecyclerView(remainingHeroes.toList())
                 } catch (e: Exception) {
-                    Log.e("HomeFragment", "Error fetching or saving heroes: ${e.message}", e)
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT)
-                        .show()
+                    showError("Error fetching or saving heroes: ${e.message}")
                 }
             }
         }
-    }
-
-    private fun likeHero(hero: HeroModel) {
-        likedHeroes.add(hero)
-        Toast.makeText(requireContext(), "Liked ${hero.firstName}", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun dislikeHero(hero: HeroModel) {
-        dislikedHeroes.add(hero)
-        Toast.makeText(requireContext(), "Disliked ${hero.firstName}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

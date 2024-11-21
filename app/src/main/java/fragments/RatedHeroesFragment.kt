@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.andr_dev_application.databinding.FragmentRatedHeroesBinding
 import utils.HeroCardAdapter
+import utils.HeroModel
 
 class RatedHeroesFragment : Fragment() {
 
@@ -23,21 +24,25 @@ class RatedHeroesFragment : Fragment() {
         val view = binding.root
 
         val args = RatedHeroesFragmentArgs.fromBundle(requireArguments())
-        displayHeroes(args.type)
+        setupRecyclerView(args.type)
 
         return view
     }
 
-    private fun displayHeroes(type: String) {
-        val heroes = when (type) {
+
+    private fun setupRecyclerView(type: String) {
+        val heroes = getHeroesForType(type)
+        heroCardAdapter = HeroCardAdapter(heroes.toMutableList())
+        binding.recyclerView.adapter = heroCardAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun getHeroesForType(type: String): List<HeroModel> {
+        return when (type) {
             "liked" -> HomeFragment.likedHeroes
             "disliked" -> HomeFragment.dislikedHeroes
             else -> emptyList()
         }
-
-        heroCardAdapter = HeroCardAdapter(heroes.toMutableList())
-        binding.recyclerView.adapter = heroCardAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun onDestroyView() {
