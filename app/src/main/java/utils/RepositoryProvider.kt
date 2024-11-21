@@ -7,10 +7,13 @@ import utils.db.AppDb
 import utils.db.HeroDbRepository
 
 object RepositoryProvider {
+    private var db: AppDb? = null
+
     fun provideHeroDbRepository(context: Context): HeroDbRepository {
-        val db = AppDb.getDatabase(context)
-        val heroDao = db.heroDao()
-        return HeroDbRepository(heroDao)
+        if (db == null) {
+            db = AppDb.getDatabase(context)
+        }
+        return HeroDbRepository(db!!.heroDao())
     }
 
     fun provideHeroApiRepository(apiService: ApiService): HeroApiRepository {
