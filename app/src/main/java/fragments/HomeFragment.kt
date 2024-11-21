@@ -73,42 +73,43 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 heroDbRepository.fetchHeroesFromLocal().collect { heroes ->
-                    remainingHeroes.clear()
-                    remainingHeroes.addAll(heroes)
-                    setupHeroRecyclerView(remainingHeroes.toList())
-
                     if (heroes.isEmpty()) {
-                        fetchHeroes()
+                        fetchAndSaveHeroes()
+                    } else {
+                        updateHeroList(heroes)
                     }
                 }
             }
         }
     }
 
-    private fun fetchHeroes() {
+    private fun fetchAndSaveHeroes() {
         lifecycleScope.launch {
             try {
-                val localHeroes = heroDbRepository.fetchHeroesFromLocal().first()
-                if (localHeroes.isEmpty()) {
-                    val apiHeroes = heroApiRepository.fetchHeroes()
-                    heroDbRepository.saveHeroesToLocal(apiHeroes)
-                    remainingHeroes.addAll(apiHeroes)
-                    val heroesFile =
-                        FileUtils.saveHeroesToFile(requireContext(), remainingHeroes.toList())
-
-                    showToast(
-                        if (heroesFile != null)
-                            "Heroes saved to ${heroesFile.absolutePath}"
-                        else
-                            "Failed to save heroes"
-                    )
-
-                    setupHeroRecyclerView(remainingHeroes.toList())
-                }
+                val apiHeroes = heroApiRepository.fetchHeroes()
+                heroDbRepository.saveHeroesToLocal(apiHeroes)
+                updateHeroList(apiHeroes)
+                saveHeroesToFile(apiHeroes)
             } catch (e: Exception) {
                 showError("Error fetching heroes: ${e.message}")
             }
         }
+    }
+
+    private fun updateHeroList(heroes: List<HeroModel>) {
+        remainingHeroes.clear()
+        remainingHeroes.addAll(heroes)
+        setupHeroRecyclerView(remainingHeroes)
+    }
+
+    private fun saveHeroesToFile(heroes: List<HeroModel>) {
+        val heroesFile = FileUtils.saveHeroesToFile(requireContext(), heroes)
+        showToast(
+            if (heroesFile != null)
+                "Heroes saved to ${heroesFile.absolutePath}"
+            else
+                "Failed to save heroes"
+        )
     }
 
     private fun setupHeroRecyclerView(heroes: List<HeroModel>) {
@@ -142,8 +143,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+        ItemTouchHelper(swipeHandler).attachToRecyclerView(binding.recyclerView)
     }
 
     private fun handleHeroSwipe(hero: HeroModel, direction: Int) {
@@ -153,9 +153,7 @@ class HomeFragment : Fragment() {
             dislikeHero(hero)
         }
 
-        lifecycleScope.launch {
-            heroDbRepository.deleteHero(hero)
-        }
+        lifecycleScope.launch { heroDbRepository.deleteHero(hero) }
     }
 
     private fun likeHero(hero: HeroModel) {
@@ -168,39 +166,35 @@ class HomeFragment : Fragment() {
         showToast("Disliked ${hero.firstName}")
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showError(message: String) {
-        Log.e("HomeFragment", message)
-        Toast.makeText(requireContext(), "Error: $message", Toast.LENGTH_SHORT).show()
-    }
-
     private fun setupFetchHeroesButton() {
         binding.fetchHeroesButton.setOnClickListener {
             lifecycleScope.launch {
                 try {
                     val apiHeroes = heroApiRepository.fetchHeroes()
                     val localHeroes = heroDbRepository.fetchHeroesFromLocal().first()
-                    val existingHeroIds = localHeroes.map { it.id }.toSet()
-                    val newHeroes = apiHeroes.filter { it.id !in existingHeroIds }
+                    val newHeroes = apiHeroes.filter { it.id !in localHeroes.map { it.id } }
 
                     if (newHeroes.isNotEmpty()) {
                         heroDbRepository.saveHeroesToLocal(newHeroes)
+                        updateHeroList(heroDbRepository.fetchHeroesFromLocal().first())
                         showToast("New heroes added to the database!")
                     } else {
                         showToast("No new heroes to add.")
                     }
-
-                    remainingHeroes.clear()
-                    remainingHeroes.addAll(heroDbRepository.fetchHeroesFromLocal().first())
-                    setupHeroRecyclerView(remainingHeroes.toList())
                 } catch (e: Exception) {
                     showError("Error fetching or saving heroes: ${e.message}")
                 }
             }
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showError(message: String) {
+        Log.e("HomeFragment", message)
+        showToast("Error: $message")
     }
 
     override fun onDestroyView() {
