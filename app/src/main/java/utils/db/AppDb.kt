@@ -5,30 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [HeroEntity::class], version = 1, exportSchema = false)
+@Database(entities = [HeroEntity::class], version = 1)
 abstract class AppDb : RoomDatabase() {
     abstract fun heroDao(): HeroDao
 
     companion object {
-        @Volatile private var instance: AppDb? = null
+        @Volatile
+        private var instance: AppDb? = null
 
-        fun getDatabase(context: Context): AppDb {
-            return instance ?: synchronized(this) {
-                val tempInstance = instance
-                if (tempInstance != null) {
-                    return tempInstance
-                }
-
-                val newInstance = Room.databaseBuilder(
+        fun getDatabase(context: Context): AppDb =
+            instance ?: synchronized(this) {
+                instance ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDb::class.java,
                     "hero_database"
-                ).fallbackToDestructiveMigration()  // Add this if you want to handle schema changes
-                    .build()
-
-                instance = newInstance
-                return newInstance
+                ).build().also { instance = it }
             }
-        }
     }
 }

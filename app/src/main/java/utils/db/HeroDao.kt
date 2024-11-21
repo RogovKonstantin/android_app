@@ -1,6 +1,5 @@
 package utils.db
 
-
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -21,8 +20,4 @@ interface HeroDao {
 
     @Delete
     fun deleteHero(hero: HeroEntity): Int
-
-    @Query("DELETE FROM heroes")
-    fun deleteAllHeroes(): Int
-
 }

@@ -1,21 +1,28 @@
 package utils.db
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import utils.HeroMapper
+import utils.HeroModel
+
 
 class HeroDbRepository(private val heroDao: HeroDao) {
 
-   fun saveHeroes(heroes: List<HeroEntity>) {
-        heroDao.insertHeroes(heroes)
+    suspend fun saveHeroesToLocal(heroes: List<HeroModel>) = withContext(Dispatchers.IO) {
+        val heroEntities = heroes.map(HeroMapper::toEntity)
+        heroDao.insertHeroes(heroEntities)
     }
 
-    fun getHeroes(): Flow<List<HeroEntity>> {
-        return heroDao.getAllHeroes()
+    fun fetchHeroesFromLocal(): Flow<List<HeroModel>> {
+        return heroDao.getAllHeroes().map { entities ->
+            entities.map(HeroMapper::toModel)
+        }
     }
 
-
-    fun deleteHero(hero: HeroEntity) {
-        heroDao.deleteHero(hero)
+    suspend fun deleteHero(hero: HeroModel) = withContext(Dispatchers.IO) {
+        heroDao.deleteHero(HeroMapper.toEntity(hero))
     }
-
 }
+

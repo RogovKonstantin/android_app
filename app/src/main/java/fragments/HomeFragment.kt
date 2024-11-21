@@ -22,15 +22,16 @@ import utils.HeroModel
 import utils.StackLayoutManager
 import utils.api.RetrofitInstance
 import utils.FileUtils
-import utils.api.HeroRepository
-
+import utils.api.HeroApiRepository
+import utils.RepositoryProvider
+import utils.db.HeroDbRepository
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val remainingHeroes = mutableSetOf<HeroModel>() // Use Set to prevent duplicates
+    private val remainingHeroes = mutableSetOf<HeroModel>()
 
     companion object {
         val likedHeroes = mutableListOf<HeroModel>()
@@ -38,12 +39,16 @@ class HomeFragment : Fragment() {
     }
 
     private lateinit var heroCardAdapter: HeroCardAdapter
+    private lateinit var heroDbRepository: HeroDbRepository
+    private lateinit var heroApiRepository: HeroApiRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        heroDbRepository = RepositoryProvider.provideHeroDbRepository(requireContext())
+        heroApiRepository = RepositoryProvider.provideHeroApiRepository(RetrofitInstance.api)
         setupNavigation()
         observeHeroes()
         setupSwipeGesture()
@@ -61,15 +66,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeHeroes() {
-        val repository = RetrofitInstance.provideHeroRepository(requireContext())
-
-        setupFetchHeroesButton(repository)
+        setupFetchHeroesButton()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.fetchHeroesFromLocal().collect { heroes ->
+                heroDbRepository.fetchHeroesFromLocal().collect { heroes ->
                     if (heroes.isEmpty()) {
-                        fetchHeroes(repository)
+                        fetchHeroes()
                     } else {
                         remainingHeroes.clear()
                         remainingHeroes.addAll(heroes)
@@ -80,22 +83,28 @@ class HomeFragment : Fragment() {
         }
     }
 
-
-
-    private fun fetchHeroes(repository: HeroRepository) {
+    private fun fetchHeroes() {
         lifecycleScope.launch {
             try {
-                val localHeroes = repository.fetchHeroesFromLocal().first()
+                val localHeroes = heroDbRepository.fetchHeroesFromLocal().first()
 
                 if (localHeroes.isEmpty()) {
-                    val apiHeroes = repository.fetchHeroes()
-                    repository.saveHeroesToLocal(apiHeroes)
+                    val apiHeroes = heroApiRepository.fetchHeroes()
+                    heroDbRepository.saveHeroesToLocal(apiHeroes)
                     remainingHeroes.addAll(apiHeroes)
 
                     FileUtils.saveHeroesToFile(requireContext(), remainingHeroes.toList())
                         ?.let { file ->
-                            Toast.makeText(requireContext(), "Heroes saved to ${file.absolutePath}", Toast.LENGTH_SHORT).show()
-                        } ?: Toast.makeText(requireContext(), "Failed to save heroes", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Heroes saved to ${file.absolutePath}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } ?: Toast.makeText(
+                        requireContext(),
+                        "Failed to save heroes",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                     setupHeroRecyclerView(remainingHeroes.toList())
                 } else {
@@ -111,13 +120,14 @@ class HomeFragment : Fragment() {
 
     private fun setupHeroRecyclerView(heroes: List<HeroModel>) {
         heroCardAdapter = HeroCardAdapter(heroes.toMutableList())
-        heroCardAdapter.ensurePlaceholder() // Ensure placeholder is always present
+        heroCardAdapter.ensurePlaceholder()
         binding.recyclerView.adapter = heroCardAdapter
         binding.recyclerView.layoutManager = StackLayoutManager(requireContext())
     }
 
     private fun setupSwipeGesture() {
-        val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        val swipeHandler = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -141,8 +151,7 @@ class HomeFragment : Fragment() {
                     }
 
                     lifecycleScope.launch {
-                        val repository = RetrofitInstance.provideHeroRepository(requireContext())
-                        repository.deleteHero(hero)
+                        heroDbRepository.deleteHero(hero)
                     }
 
                     heroCardAdapter.removeHeroAt(position)
@@ -154,35 +163,43 @@ class HomeFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
-    private fun setupFetchHeroesButton(repository: HeroRepository) {
+    private fun setupFetchHeroesButton() {
         binding.fetchHeroesButton.setOnClickListener {
             lifecycleScope.launch {
                 try {
-                    val apiHeroes = repository.fetchHeroes()
+                    val apiHeroes = heroApiRepository.fetchHeroes()
 
-                    val localHeroes = repository.fetchHeroesFromLocal().first()
+                    val localHeroes = heroDbRepository.fetchHeroesFromLocal().first()
 
                     val existingHeroIds = localHeroes.map { it.id }.toSet()
                     val newHeroes = apiHeroes.filter { it.id !in existingHeroIds }
 
                     if (newHeroes.isNotEmpty()) {
-                        repository.saveHeroesToLocal(newHeroes)
-                        Toast.makeText(requireContext(), "New heroes added to the database!", Toast.LENGTH_SHORT).show()
+                        heroDbRepository.saveHeroesToLocal(newHeroes)
+                        Toast.makeText(
+                            requireContext(),
+                            "New heroes added to the database!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(requireContext(), "No new heroes to add.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "No new heroes to add.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     remainingHeroes.clear()
-                    remainingHeroes.addAll(repository.fetchHeroesFromLocal().first())
+                    remainingHeroes.addAll(heroDbRepository.fetchHeroesFromLocal().first())
                     setupHeroRecyclerView(remainingHeroes.toList())
                 } catch (e: Exception) {
                     Log.e("HomeFragment", "Error fetching or saving heroes: ${e.message}", e)
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
     }
-
 
     private fun likeHero(hero: HeroModel) {
         likedHeroes.add(hero)
