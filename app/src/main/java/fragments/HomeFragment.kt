@@ -63,6 +63,8 @@ class HomeFragment : Fragment() {
     private fun observeHeroes() {
         val repository = RetrofitInstance.provideHeroRepository(requireContext())
 
+        setupFetchHeroesButton(repository)
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 repository.fetchHeroesFromLocal().collect { heroes ->
@@ -77,6 +79,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
 
 
     private fun fetchHeroes(repository: HeroRepository) {
@@ -150,6 +153,36 @@ class HomeFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
+
+    private fun setupFetchHeroesButton(repository: HeroRepository) {
+        binding.fetchHeroesButton.setOnClickListener {
+            lifecycleScope.launch {
+                try {
+                    val apiHeroes = repository.fetchHeroes()
+
+                    val localHeroes = repository.fetchHeroesFromLocal().first()
+
+                    val existingHeroIds = localHeroes.map { it.id }.toSet()
+                    val newHeroes = apiHeroes.filter { it.id !in existingHeroIds }
+
+                    if (newHeroes.isNotEmpty()) {
+                        repository.saveHeroesToLocal(newHeroes)
+                        Toast.makeText(requireContext(), "New heroes added to the database!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "No new heroes to add.", Toast.LENGTH_SHORT).show()
+                    }
+
+                    remainingHeroes.clear()
+                    remainingHeroes.addAll(repository.fetchHeroesFromLocal().first())
+                    setupHeroRecyclerView(remainingHeroes.toList())
+                } catch (e: Exception) {
+                    Log.e("HomeFragment", "Error fetching or saving heroes: ${e.message}", e)
+                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     private fun likeHero(hero: HeroModel) {
         likedHeroes.add(hero)
