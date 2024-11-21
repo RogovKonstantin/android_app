@@ -72,12 +72,13 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 heroDbRepository.fetchHeroesFromLocal().collect { heroes ->
+                    remainingHeroes.clear()
+                    remainingHeroes.addAll(heroes)
+                    setupHeroRecyclerView(remainingHeroes.toList())
+
+                    // Если список пуст, вызываем fetchHeroes только для получения данных
                     if (heroes.isEmpty()) {
                         fetchHeroes()
-                    } else {
-                        remainingHeroes.clear()
-                        remainingHeroes.addAll(heroes)
-                        setupHeroRecyclerView(remainingHeroes.toList())
                     }
                 }
             }
@@ -92,13 +93,13 @@ class HomeFragment : Fragment() {
                     val apiHeroes = heroApiRepository.fetchHeroes()
                     heroDbRepository.saveHeroesToLocal(apiHeroes)
                     remainingHeroes.addAll(apiHeroes)
-                    FileUtils.saveHeroesToFile(requireContext(), remainingHeroes.toList())
-                        ?.let { file -> showToast("Heroes saved to ${file.absolutePath}") }
-                        ?: showToast("Failed to save heroes")
+                    val heroesFile = FileUtils.saveHeroesToFile(requireContext(), remainingHeroes.toList())
 
-                    setupHeroRecyclerView(remainingHeroes.toList())
-                } else {
-                    remainingHeroes.addAll(localHeroes)
+                    if (heroesFile != null) {
+                        showToast("Heroes saved to ${heroesFile.absolutePath}")
+                    } else {
+                        showToast("Failed to save heroes")
+                    }
                     setupHeroRecyclerView(remainingHeroes.toList())
                 }
             } catch (e: Exception) {
